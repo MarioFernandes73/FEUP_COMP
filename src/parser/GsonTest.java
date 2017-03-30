@@ -31,7 +31,7 @@ public class GsonTest {
 
     public static void main(String[] args) {
 
-        File json = new File("C:\\Users\\Mário\\Desktop\\file.json");
+        File json = new File("file.json");
 
         Map<String, Object> jsonJavaRootObject = new Gson().fromJson(read(json), Map.class);
         
