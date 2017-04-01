@@ -62,10 +62,37 @@ public class GsonTest {
     private static void analyzeBody(JsonObject jobject) {
     	Set<Map.Entry<String,JsonElement>> ola = jobject.entrySet();
         Iterator<Entry<String, JsonElement>> it = ola.iterator();
+        
         while(it.hasNext()){
         	Entry<String, JsonElement> entry = it.next();
-        	System.out.println(entry.getKey().toString());
-        	System.out.println(entry.getValue().toString());
+        	
+        	String classType = entry.getValue().getClass().getSimpleName();
+        	
+        	switch (classType) {
+			case "JsonArray":
+			{
+				System.out.println("\nARRAY: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+        		analyzeBody(entry.getValue().getAsJsonArray().get(0).getAsJsonObject());
+				break;
+			}
+			case "JsonPrimitive":
+			{	
+				System.out.println("\nPRIMITIVE: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+				break;
+			}
+			case "JsonObject":
+			{
+				System.out.println("\nOBJECT: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+        		analyzeBody(entry.getValue().getAsJsonObject());
+				break;
+			}
+			default:
+			{
+				System.out.println("OUTRO");
+				break;
+			}
+			}
+        	
         }
 	}
 
