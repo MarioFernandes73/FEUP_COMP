@@ -19,8 +19,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gson.*;
@@ -35,35 +38,38 @@ public class GsonTest {
 
         Map<String, Object> jsonJavaRootObject = new Gson().fromJson(read(json), Map.class);
         
-       
+    /*   
         System.out.println("JSON:\n" + jsonJavaRootObject);
         
         for (Map.Entry<String, Object> entry : jsonJavaRootObject.entrySet())
         {
             System.out.println(entry.getKey() + "/" + entry.getValue());
-         /*   for(Map.Entry<String, Object> entry2 : jsonJavaRootObject.get(entry.getValue()).)
-            {
-            	
-            }*/
         }
+        */
+        
+        JsonElement jelement = new JsonParser().parse(jsonJavaRootObject.toString());
+        JsonObject  jobject = jelement.getAsJsonObject();
+        JsonArray jarray = jobject.getAsJsonArray("body");
+        jobject = jarray.get(0).getAsJsonObject();
+        analyzeBody(jobject);
         
         
-        
-        /*JsonElement jelement = new JsonParser().parse(jsonJavaRootObject.toString());
-        
-        JsonObject json2 = jelement.getAsJsonObject();
-        System.out.println(json2);
-        JsonArray jarray = json2.getAsJsonArray("body");
-        json2 = jarray.get(0).getAsJsonObject();
-        System.out.println(json2);
-        
-        
-        
-        System.out.println(json2.get("type").toString());*/
+        String result = jobject.get("type").toString();
+
         
     }
 
-    /**
+    private static void analyzeBody(JsonObject jobject) {
+    	Set<Map.Entry<String,JsonElement>> ola = jobject.entrySet();
+        Iterator<Entry<String, JsonElement>> it = ola.iterator();
+        while(it.hasNext()){
+        	Entry<String, JsonElement> entry = it.next();
+        	System.out.println(entry.getKey().toString());
+        	System.out.println(entry.getValue().toString());
+        }
+	}
+
+	/**
      * Given a File object, returns a String with the contents of the file.
      * 
      * <p>
