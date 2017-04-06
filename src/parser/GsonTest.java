@@ -19,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,18 +50,15 @@ public class GsonTest {
         */
         
         JsonElement jelement = new JsonParser().parse(jsonJavaRootObject.toString());
-        JsonObject  jobject = jelement.getAsJsonObject();
-        JsonArray jarray = jobject.getAsJsonArray("body");
-        jobject = jarray.get(0).getAsJsonObject();
-        analyzeBody(jobject);
+        JsonObject  body = jelement.getAsJsonObject();
         
+        HashMap<String,Info> test = new HashMap<String,Info>();
+        analyzeBody(body,test);
         
-        String result = jobject.get("type").toString();
-
-        
+        printInfo(test);
     }
 
-    private static void analyzeBody(JsonObject jobject) {
+    private static void analyzeBody(JsonObject jobject, HashMap<String,Info> map) {
     	Set<Map.Entry<String,JsonElement>> ola = jobject.entrySet();
         Iterator<Entry<String, JsonElement>> it = ola.iterator();
         
@@ -71,19 +70,29 @@ public class GsonTest {
         	switch (classType) {
 			case "JsonArray":
 			{
-				System.out.println("\nARRAY: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
-        		analyzeBody(entry.getValue().getAsJsonArray().get(0).getAsJsonObject());
+				//System.out.println("\nARRAY: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+				ArrayList<Info> tmp_array = new ArrayList<Info>();
+				
+				for(JsonElement elem : entry.getValue().getAsJsonArray()){
+					HashMap<String,Info> tmp = new HashMap<String,Info>();
+	        		analyzeBody(elem.getAsJsonObject(),tmp);
+	        		tmp_array.add(new Info(tmp));
+				}
+				map.put(entry.getKey().toString(),new Info(tmp_array));
 				break;
 			}
 			case "JsonPrimitive":
 			{	
-				System.out.println("\nPRIMITIVE: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+				//System.out.println("\nPRIMITIVE: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+				map.put(entry.getKey().toString(), new Info(entry.getValue().toString()));
 				break;
 			}
 			case "JsonObject":
 			{
-				System.out.println("\nOBJECT: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
-        		analyzeBody(entry.getValue().getAsJsonObject());
+				//System.out.println("\nOBJECT: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
+				Info tmp = new Info(new HashMap<String,Info>());
+        		analyzeBody(entry.getValue().getAsJsonObject(),tmp.getScope());
+        		map.put(entry.getKey().toString(),tmp);
 				break;
 			}
 			default:
@@ -95,6 +104,37 @@ public class GsonTest {
         	
         }
 	}
+    
+    private static void printInfo(HashMap<String,Info> hm){
+    	for(Entry<String, Info> entry : hm.entrySet()){
+    		
+    		System.out.println("\nKey   : " + entry.getKey());
+    		System.out.println("Value : ");
+    		
+    		if(entry.getValue().isValue())
+    			System.out.println(entry.getValue().getValue());
+    		
+    		else if(entry.getValue().isScope()){
+    			
+    			System.out.println("Scope\n{");
+    			printInfo(entry.getValue().getScope());
+    			System.out.println("\n}ENDScope");
+    			
+    		}
+    		else if(entry.getValue().isArray()){
+    			System.out.println("Array\n{");
+    			
+    			for(Info elem : entry.getValue().getArray())
+    				{
+    				System.out.println("Elem\n{");
+    				printInfo(elem.getScope());
+    				System.out.println("\n}ENDElem");
+    				}
+    			
+    			System.out.println("\n}ENDArray");
+    		}
+    	}
+    }
 
 	/**
      * Given a File object, returns a String with the contents of the file.
