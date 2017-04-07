@@ -109,7 +109,7 @@ public class GsonTest {
     	for(Entry<String, Info> entry : hm.entrySet()){
     		
     		System.out.println("\nKey   : " + entry.getKey());
-    		System.out.println("Value : ");
+    		System.out.print("Value : ");
     		
     		if(entry.getValue().isValue())
     			System.out.println(entry.getValue().getValue());
