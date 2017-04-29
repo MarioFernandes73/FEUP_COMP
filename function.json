@@ -7,7 +7,16 @@
                 "type": "Identifier",
                 "name": "test"
             },
-            "params": [],
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "i"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "j"
+                }
+            ],
             "body": {
                 "type": "BlockStatement",
                 "body": [

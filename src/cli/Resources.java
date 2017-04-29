@@ -12,6 +12,13 @@ public class Resources
 		INTEGER, ARRAYINTEGER,
 		NOTASSIGNED
 	}
+	
+	public enum JSONType{
+		START,
+		FUNCTION,
+		VARIABLEDECLARATION,
+		PARAM
+	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";
 }

@@ -9,7 +9,9 @@ public class SymbolTable
 	public ArrayList<Descriptor> locals = new ArrayList<>();
 	public Descriptor functionReturn;
 	
-	public SymbolTable(String name){
+	public SymbolTable(){}
+	
+	public void addName(String name){
 		this.functionName = name;
 	}
 	

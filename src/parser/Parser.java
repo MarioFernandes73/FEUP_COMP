@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,11 +19,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import cli.Resources;
+import cli.Resources.JSONType;
 
 public class Parser 
 {
-	public ArrayList<SymbolTable> symbolTable = new ArrayList<>();
-	public HashMap<String,Info> hir = new HashMap<String,Info>();
+	public ArrayList<SymbolTable> tables = new ArrayList<>();
+	public Node hir;
 
 	public Parser(String filename)
 	{
@@ -40,86 +40,130 @@ public class Parser
 		JsonElement jelement = new JsonParser().parse(jsonJavaRootObject.toString());
 		JsonObject  body = jelement.getAsJsonObject();
 
+		hir = new Node(JSONType.START);
 		analyzeBody(body,hir);
 
+		System.out.println("\n------- START PRINTING -------");
+		
 		printInfo(hir);	
 	}
 
-	private static void analyzeBody(JsonObject jobject, HashMap<String,Info> map) {
-		Set<Map.Entry<String,JsonElement>> ola = jobject.entrySet();
-		Iterator<Entry<String, JsonElement>> it = ola.iterator();
+	private void analyzeBody(JsonObject jobject, Node node) 
+	{
+		System.out.println("+++++");
 
-		while(it.hasNext()){
+		String key;
+		String classType;
+		String value;
+		Node newNode = null;
+
+		Set<Map.Entry<String,JsonElement>> obj = jobject.entrySet();
+		Iterator<Entry<String, JsonElement>> it = obj.iterator();
+
+		while(it.hasNext())
+		{
 			Entry<String, JsonElement> entry = it.next();
 
-			String classType = entry.getValue().getClass().getSimpleName();
+			classType = entry.getValue().getClass().getSimpleName();
+			key = entry.getKey().toString();
+			value = entry.getValue().toString();
 
-			switch (classType) {
+			switch (classType) 
+			{
 			case "JsonArray":
-			{
-				System.out.println("\nARRAY: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
-				ArrayList<Info> tmp_array = new ArrayList<Info>();
-
-				for(JsonElement elem : entry.getValue().getAsJsonArray()){
-					HashMap<String,Info> tmp = new HashMap<String,Info>();
-					analyzeBody(elem.getAsJsonObject(),tmp);
-					tmp_array.add(new Info(tmp));
+				System.out.println("\nARRAY: \n" + key + " = " + value);
+			
+				for(JsonElement elem : entry.getValue().getAsJsonArray())
+				{
+					if(key.equals("params"))
+					{
+						newNode = new Node(JSONType.PARAM);
+						analyzeBody(elem.getAsJsonObject(),newNode);
+						node.addAdj(newNode);
+						newNode = null;
+					}
+					else if(newNode != null){
+						analyzeBody(elem.getAsJsonObject(),newNode);
+						node.addAdj(newNode);
+					}
+					else
+						analyzeBody(elem.getAsJsonObject(),node);
 				}
-				map.put(entry.getKey().toString(),new Info(tmp_array));
+
 				break;
-			}
 			case "JsonPrimitive":
-			{	
-				System.out.println("\nPRIMITIVE: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
-				map.put(entry.getKey().toString(), new Info(entry.getValue().toString()));
+				System.out.println("\nPRIMITIVE: \n" +  key + " = " + value);
+
+				//function : type(FUNCTION), specification(function name), reference(NULL)
+				if(value.equals("\"FunctionDeclaration\""))
+				{
+					//create new Node
+					newNode = new Node(JSONType.FUNCTION);
+					//create one symbol table per function
+					tables.add(new SymbolTable());
+				}
+				else if(key.equals("name") && (node.getType() == JSONType.FUNCTION))
+				{
+					//set function name at node and at the symbolTable
+					node.setSpecification(value);
+					addNameToLastST(value);
+				}
+				//parameter : type(PARAM), specification(NULL), reference(var name and DataType)
+				else if(key.equals("name") && node.getType() == JSONType.PARAM)
+				{
+					//param descriptor starts with unknown dataType
+					Descriptor d = new Descriptor(value);
+					//add parameter to SymbolTable and set a reference to the descriptor at the HIR
+					addParamToLastST(d);
+					node.setReference(d);
+				}
+				//local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
+				else if(value.equals("\"VariableDeclaration\""))
+				{
+					//create new Node
+					newNode = new Node(JSONType.VARIABLEDECLARATION);
+				}
+				else if(key.equals("name") && node.getType() == JSONType.VARIABLEDECLARATION)
+				{
+					//create descriptor, add to node and to SymbolTable
+					Descriptor d = new Descriptor(value);
+					node.setReference(d);
+				}
+
 				break;
-			}
 			case "JsonObject":
-			{
-				System.out.println("\nOBJECT: \n" + entry.getKey().toString() + " = " + entry.getValue().toString());
-				Info tmp = new Info(new HashMap<String,Info>());
-				analyzeBody(entry.getValue().getAsJsonObject(),tmp.getScope());
-				map.put(entry.getKey().toString(),tmp);
+				System.out.println("\nOBJECT: \n" +  key + " = " + value);
+				
+				//init to create new Nodes for VARIABLEDECLARATION
+
+				if(newNode != null)
+				{
+					analyzeBody(entry.getValue().getAsJsonObject(),newNode);
+					node.addAdj(newNode);
+				}
+				else
+					analyzeBody(entry.getValue().getAsJsonObject(),node);
+
 				break;
-			}
 			default:
-			{
 				System.out.println("OUTRO");
 				break;
-			}
 			}
 
 		}
 	}
 
-	private static void printInfo(HashMap<String,Info> hm){
-		for(Entry<String, Info> entry : hm.entrySet()){
+	private void printInfo(Node n)
+	{
+		System.out.println("\nType  : " + n.getType().toString());
+		System.out.println("Specification : "+n.getSpecification());
 
-			System.out.println("\nKey   : " + entry.getKey());
-			System.out.print("Value : ");
+		Descriptor d = n.getReference();
+		if(d != null)
+			System.out.println("Descriptor : \n   Name : "+d.name + "\n   Type : "+d.type);
 
-			if(entry.getValue().isValue())
-				System.out.println(entry.getValue().getValue());
-
-			else if(entry.getValue().isScope()){
-
-				System.out.println("Scope\n{");
-				printInfo(entry.getValue().getScope());
-				System.out.println("\n}ENDScope");
-
-			}
-			else if(entry.getValue().isArray()){
-				System.out.println("Array\n{");
-
-				for(Info elem : entry.getValue().getArray())
-				{
-					System.out.println("Elem\n{");
-					printInfo(elem.getScope());
-					System.out.println("\n}ENDElem");
-				}
-
-				System.out.println("\n}ENDArray");
-			}
+		for(Node n1 : n.getAdj()){
+			printInfo(n1);
 		}
 	}
 
@@ -133,7 +177,7 @@ public class Parser
 	 *            a File object representing a file.
 	 * @return a String with the contents of the file.
 	 */
-	public static String read(File file) {
+	private String read(File file) {
 		// Check null argument. If null, it would raise and exception and stop
 		// the program when used to create the File object.
 		if (file == null) {
@@ -168,5 +212,15 @@ public class Parser
 		}
 
 		return stringBuilder.toString();
+	}
+
+	private void addNameToLastST(String name){
+		SymbolTable st = tables.get(tables.size()-1);
+		st.addName(name);
+	}
+
+	private void addParamToLastST(Descriptor d){
+		SymbolTable st = tables.get(tables.size()-1);
+		st.addParam(d);
 	}
 }
