@@ -18,6 +18,8 @@ public class Node
 		this.reference = null;
 	}
 
+	public Node() {}
+
 	public void addAdj(Node node) {
 		adj.add(node);
 	}

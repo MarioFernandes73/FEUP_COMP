@@ -17,7 +17,9 @@ public class Resources
 		START,
 		FUNCTION,
 		VARIABLEDECLARATION,
-		PARAM
+		PARAM,
+		OPERATION,
+		INT, DOUBLE, FLOAT, STRING, BOOLEAN
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";

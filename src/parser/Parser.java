@@ -45,7 +45,7 @@ public class Parser
 
 		System.out.println("\n------- START PRINTING -------");
 		
-		printInfo(hir);	
+		printInfo(hir,"");	
 	}
 
 	private void analyzeBody(JsonObject jobject, Node node) 
@@ -77,10 +77,9 @@ public class Parser
 				{
 					if(key.equals("params"))
 					{
-						newNode = new Node(JSONType.PARAM);
-						analyzeBody(elem.getAsJsonObject(),newNode);
-						node.addAdj(newNode);
-						newNode = null;
+						Node param = new Node(JSONType.PARAM);
+						analyzeBody(elem.getAsJsonObject(),param);
+						newNode.addAdj(param);
 					}
 					else if(newNode != null){
 						analyzeBody(elem.getAsJsonObject(),newNode);
@@ -102,7 +101,7 @@ public class Parser
 					//create one symbol table per function
 					tables.add(new SymbolTable());
 				}
-				else if(key.equals("name") && (node.getType() == JSONType.FUNCTION))
+				else if(key.equals("name") && (node.getType() == JSONType.FUNCTION))	//COMPOR ISTO
 				{
 					//set function name at node and at the symbolTable
 					node.setSpecification(value);
@@ -128,13 +127,33 @@ public class Parser
 					//create descriptor, add to node and to SymbolTable
 					Descriptor d = new Descriptor(value);
 					node.setReference(d);
+					
+					newNode = node;		//this node will have childs
+				}
+				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
+				else if(value.equals("\"BinaryExpression\""))
+				{
+					newNode = new Node(JSONType.OPERATION);
+				}
+				//add specification to OPERATION
+				else if(key.equals("operator"))
+				{
+					newNode.setSpecification(value);
+				}
+				else if(key.equals("literal"))
+				{
+					newNode = new Node();
+				}
+				else if(key.equals("raw") && newNode != null)
+				{
+					//ATENCAO : falta verificar o tipo!!
+					newNode.setType(JSONType.INT);
+					newNode.setSpecification(value);
 				}
 
 				break;
 			case "JsonObject":
 				System.out.println("\nOBJECT: \n" +  key + " = " + value);
-				
-				//init to create new Nodes for VARIABLEDECLARATION
 
 				if(newNode != null)
 				{
@@ -153,17 +172,19 @@ public class Parser
 		}
 	}
 
-	private void printInfo(Node n)
+	private void printInfo(Node n,String spacement)
 	{
-		System.out.println("\nType  : " + n.getType().toString());
-		System.out.println("Specification : "+n.getSpecification());
+		System.out.println();
+		System.out.println(spacement + "Type  : " + n.getType().toString());
+		System.out.println(spacement + "Specification : "+n.getSpecification());
 
 		Descriptor d = n.getReference();
 		if(d != null)
-			System.out.println("Descriptor : \n   Name : "+d.name + "\n   Type : "+d.type);
+			System.out.println(spacement + "Descriptor ( Name : "+d.name + " | Type : "+d.type+" )");
 
-		for(Node n1 : n.getAdj()){
-			printInfo(n1);
+		for(Node n1 : n.getAdj())
+		{
+			printInfo(n1, spacement+"- ");
 		}
 	}
 
