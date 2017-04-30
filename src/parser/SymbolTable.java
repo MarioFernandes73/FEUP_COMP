@@ -26,4 +26,20 @@ public class SymbolTable
 	public void addReturn(Descriptor d){
 		this.functionReturn = d;
 	}
+
+	public Descriptor findParam(String value) {
+		for(Descriptor d : params)
+			if(d.name.equals(value))
+				return d;
+		return null;
+	}
+
+	public Descriptor findLocal(String value) {
+		for(Descriptor d : locals)
+		{
+			if(d.name.equals(value))
+				return d;
+		}
+		return null;
+	}
 }

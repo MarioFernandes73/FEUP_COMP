@@ -69,7 +69,7 @@
                         "type": "ReturnStatement",
                         "argument": {
                             "type": "Identifier",
-                            "name": "answer"
+                            "name": "x"
                         }
                     }
                 ]
