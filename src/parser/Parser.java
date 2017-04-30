@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -30,25 +29,20 @@ public class Parser
 	{
 		File json = new File(filename);
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> jsonJavaRootObject = new Gson().fromJson(read(json), Map.class);
-
-		/*System.out.println("JSON:\n" + jsonJavaRootObject);
-	    for (Map.Entry<String, Object> entry : jsonJavaRootObject.entrySet())
-	        System.out.println(entry.getKey() + "/" + entry.getValue());*/
-
-		JsonElement jelement = new JsonParser().parse(jsonJavaRootObject.toString());
-		JsonObject  body = jelement.getAsJsonObject();
+		String jsonToString = read(json);
+		JsonElement jelement = new JsonParser().parse(jsonToString);
+	    JsonObject root = jelement.getAsJsonObject();
 
 		hir = new Node(JSONType.START);
-		analyzeBody(body,hir);
 		
+		analyzeBody(root, hir);
+
 		System.out.println("\n------- START PRINTING HIR -------");
 		printHIR(hir,"");	
 		System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
 		printSymbolTable();
 	}
-
+	
 	private void analyzeBody(JsonObject jobject, Node node) 
 	{
 		System.out.println("Current Node : "+node.getType());
@@ -123,10 +117,7 @@ public class Parser
 				else if(key.equals("name") && (node.getType() == JSONType.RETURN))
 				{
 					Descriptor d = findDescriptorAtLastST(value); 
-					
-					if(d == null)
-						System.out.println("rip");
-					
+
 					node.setReference(d);
 					addReturnToLastST(d);
 				}
@@ -195,7 +186,7 @@ public class Parser
 
 				break;
 			default:
-				System.out.println("OUTRO");
+				System.out.println("OTHER");
 				break;
 			}	
 		}
@@ -203,6 +194,7 @@ public class Parser
 
 	private void printHIR(Node n,String spacement)
 	{
+		System.out.println();
 		System.out.println(spacement + "Type  : " + n.getType().toString());
 		System.out.println(spacement + "Specification : "+n.getSpecification());
 
@@ -215,22 +207,22 @@ public class Parser
 			printHIR(n1, spacement+"- ");
 		}
 	}
-	
+
 	private void printSymbolTable()
 	{
 		System.out.println();
-		
+
 		for(SymbolTable st : tables)
 		{
 			System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
-			
+
 			for(Descriptor d : st.params)
 				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-			
+
 			System.out.println("   Locals : ");
 			for(Descriptor d : st.locals)
 				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-			
+
 			if(st.functionReturn != null)
 				System.out.println("   Return : \n      Name : "+st.functionReturn.name + "   AND   Type : "+st.functionReturn.type+"\n");	
 			else
@@ -294,7 +286,7 @@ public class Parser
 		SymbolTable st = tables.get(tables.size()-1);
 		st.addParam(d);
 	}
-	
+
 	private void addLocalToLastST(Descriptor d){
 		SymbolTable st = tables.get(tables.size()-1);
 		st.addLocal(d);

@@ -1,4 +1,4 @@
-{
+﻿{
     "type": "Program",
     "body": [
         {
@@ -47,7 +47,7 @@
                         ],
                         "kind": "var"
                     },
-					{
+                    {
                         "type": "VariableDeclaration",
                         "declarations": [
                             {
