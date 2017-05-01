@@ -25,7 +25,8 @@ public class Resources
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
 		OPERATION,				//+ - * /
-		IFSTATEMENT
+		IFSTATEMENT,
+		ELSE
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";

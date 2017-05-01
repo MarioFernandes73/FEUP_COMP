@@ -14,14 +14,18 @@ function test2(i,j)
 }
 
 //teste atual
-
 function test3(y)
 {
 	var x;
 	if(x < y)
-		x = 4;
-	else
-		x = 5;
+	{
+		x = y;
+		x = x + 4;
+	}
+	else{
+		x = y;
+		x = x + 6;
+	}
 	
 	return x;
 }

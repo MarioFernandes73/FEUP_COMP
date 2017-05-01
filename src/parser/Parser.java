@@ -269,7 +269,16 @@ public class Parser
 			case "JsonObject":
 				System.out.println("\nOBJECT: \n" +  key + " = " + value);
 
-				analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
+				//special case where alternate object needs a new node to handle the else possibility
+				if(key.equals("alternate"))
+				{
+					Node elseNode = createNewNode(currentNode, JSONType.ELSE, null, null);
+					analyzeBody(entry.getValue().getAsJsonObject(),elseNode);
+				}
+				else
+				{
+					analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
+				}
 			
 				break;
 			default:
