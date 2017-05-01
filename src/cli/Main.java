@@ -21,5 +21,6 @@ public class Main {
 
     	//o ficheiro sera recebido como parametro
     	new Parser("function.json");
+    	
     }
 }

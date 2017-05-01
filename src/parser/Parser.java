@@ -43,226 +43,6 @@ public class Parser
 		printSymbolTable();
 	}
 	
-	private void analyzeBody(JsonObject jobject, Node node) 
-	{
-		System.out.println("Current Node : "+node.getType());
-
-		String key;
-		String classType;
-		String value;
-		Node newNode = null;
-
-		Set<Map.Entry<String,JsonElement>> obj = jobject.entrySet();
-		Iterator<Entry<String, JsonElement>> it = obj.iterator();
-
-		while(it.hasNext())
-		{			
-			Entry<String, JsonElement> entry = it.next();
-
-			classType = entry.getValue().getClass().getSimpleName();
-			key = entry.getKey().toString();
-			value = entry.getValue().toString();
-			
-			Node currentNode = node;
-			if(newNode != null)
-				currentNode = newNode;
-			
-			JSONType nodeType = currentNode.getType();
-			String nodeSpecification = currentNode.getSpecification();
-			Descriptor nodeReference = currentNode.getReference();
-
-			switch (classType) 
-			{
-			case "JsonArray":
-				System.out.println("\nARRAY: \n" + key + " = " + value);
-
-				for(JsonElement elem : entry.getValue().getAsJsonArray())
-				{
-					// special case where PARAMS originaly belongs to START node but we need them at FUNCTION node
-					if(key.equals("params"))
-					{
-						Node param = new Node(JSONType.PARAM);
-						analyzeBody(elem.getAsJsonObject(),param);
-						newNode.addAdj(param);
-					}
-					else
-					{
-						System.out.println(" --- ANTES --- ");
-						analyzeBody(elem.getAsJsonObject(),currentNode);
-						System.out.println(" --- DEPOIS --- ");
-					}
-				}
-
-				break;
-			case "JsonPrimitive":
-				System.out.println("\nPRIMITIVE: \n" +  key + " = " + value);
-				
-				//function : type(FUNCTION), specification(function name), reference(NULL)
-				if(value.equals("\"FunctionDeclaration\""))
-				{
-					//create new Node
-					newNode = new Node(JSONType.FUNCTION);
-					node.addAdj(newNode);
-					//create one symbol table per function
-					tables.add(new SymbolTable());
-				}
-				else if(key.equals("name") && nodeType == JSONType.FUNCTION)
-				{
-					//set function name at node and at the symbolTable
-					currentNode.setSpecification(value);
-					addNameToLastST(value);
-				}
-				
-				//return : type(RETURN), specification(NULL), reference(var name and type)
-				else if(value.equals("\"ReturnStatement\"") && nodeType == JSONType.FUNCTION)
-				{
-					newNode = new Node(JSONType.RETURN);
-					node.addAdj(newNode);
-				}
-				else if(key.equals("name") && nodeType == JSONType.RETURN && nodeReference == null)
-				{
-					Descriptor d = findDescriptorAtLastST(value); 
-					currentNode.setReference(d);
-					addReturnToLastST(d);
-				}
-				
-				//parameter : type(PARAM), specification(NULL), reference(var name and DataType)
-				else if(key.equals("name") && nodeType == JSONType.PARAM && nodeReference == null)
-				{
-					//param descriptor starts with unknown dataType
-					Descriptor d = new Descriptor(value);
-					//add parameter to SymbolTable and set a reference to the descriptor at the HIR
-					addParamToLastST(d);
-					currentNode.setReference(d);
-				}
-				
-				//local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
-				else if(value.equals("\"VariableDeclaration\""))
-				{
-					//create new Node
-					newNode = new Node(JSONType.VARIABLEDECLARATION);
-					newNode.setSpecification("store");
-					node.addAdj(newNode);
-				}
-				else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
-				{
-					//create descriptor, add to node and to SymbolTable
-					Descriptor d = new Descriptor(value);
-					currentNode.setReference(d);
-					addLocalToLastST(d);
-				}
-				
-				//assignment : type(ASSIGNMENT), specification(=), reference(variable name and type)
-				else if(value.equals("\"AssignmentExpression\""))
-				{
-					newNode = new Node(JSONType.ASSIGNMENT);
-					newNode.setSpecification("store");
-					node.addAdj(newNode);
-				}
-				
-				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
-				else if(value.equals("\"BinaryExpression\""))
-				{
-					newNode = new Node(JSONType.OPERATION);
-					node.addAdj(newNode);
-				}
-				//add specification to OPERATION
-				else if(key.equals("operator") && nodeType == JSONType.OPERATION)
-				{
-					currentNode.setSpecification(value);
-				}
-				
-				//literal : type(dataType), specification(data), specification(NULL)
-				else if(value.equals("\"Literal\""))
-				{
-					newNode = new Node();
-					node.addAdj(newNode);
-				}
-				else if(key.equals("raw") && newNode != null)
-				{
-					//ATENCAO : falta verificar o tipo!!
-					currentNode.setType(JSONType.INT);
-					currentNode.setSpecification(value);
-				}
-			
-				//when we need to load some descriptor, and don't want to store it ==> create IDENTIFIER node
-				//special cases that have identifiers but we'll use them on a different way : FUNCTION, PARAM and RETURN
-				//identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
-				else if(value.equals("\"Identifier\"") && 
-						!(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
-				{
-					//The first descriptor was stored, so the second will be a IDENTIFIER
-					if(nodeSpecification.equals("store") && nodeReference != null)
-					{
-						newNode = new Node(JSONType.IDENTIFIER);
-						newNode.setSpecification("load");
-						node.addAdj(newNode);
-					}
-				}
-				
-				//adding a descriptor to some load/store node
-				else if(key.equals("name") && 
-						(nodeSpecification.equals("store") || nodeSpecification.equals("load")) && 
-						nodeReference == null)
-				{
-					Descriptor d = findDescriptorAtLastST(value); 
-					currentNode.setReference(d);
-				}
-			
-				break;
-			case "JsonObject":
-				System.out.println("\nOBJECT: \n" +  key + " = " + value);
-
-				System.out.println(" --- ANTES --- ");
-				analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
-				System.out.println(" --- DEPOIS --- ");
-
-				break;
-			default:
-				System.out.println("OTHER");
-				break;
-			}	
-		}
-	}
-
-	private void printHIR(Node n,String spacement)
-	{
-		System.out.println();
-		System.out.println(spacement + "Type  : " + n.getType().toString());
-		System.out.println(spacement + "Specification : "+n.getSpecification());
-
-		Descriptor d = n.getReference();
-		if(d != null)
-			System.out.println(spacement + "Descriptor ( Name : "+d.name + " | Type : "+d.type+" )");
-
-		for(Node n1 : n.getAdj())
-		{
-			printHIR(n1, spacement+"- ");
-		}
-	}
-
-	private void printSymbolTable()
-	{
-		System.out.println();
-
-		for(SymbolTable st : tables)
-		{
-			System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
-
-			for(Descriptor d : st.params)
-				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-
-			System.out.println("   Locals : ");
-			for(Descriptor d : st.locals)
-				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-
-			if(st.functionReturn != null)
-				System.out.println("   Return : \n      Name : "+st.functionReturn.name + "   AND   Type : "+st.functionReturn.type+"\n");	
-			else
-				System.out.println("   Return : void\n"); 
-		}
-	}
-
 	/**
 	 * Given a File object, returns a String with the contents of the file.
 	 * 
@@ -309,7 +89,203 @@ public class Parser
 
 		return stringBuilder.toString();
 	}
+	
+	private void analyzeBody(JsonObject jobject, Node node) 
+	{
+		System.out.println(" --- begin --- \n\nCurrent Node : "+node.getType());
 
+		String key;
+		String classType;
+		String value;
+		Node newNode = null;
+		Node currentNode = node;
+
+		Set<Map.Entry<String,JsonElement>> obj = jobject.entrySet();
+		Iterator<Entry<String, JsonElement>> it = obj.iterator();
+
+		while(it.hasNext())
+		{			
+			Entry<String, JsonElement> entry = it.next();
+
+			classType = entry.getValue().getClass().getSimpleName();
+			key = entry.getKey().toString();
+			value = entry.getValue().toString();
+			
+			if(newNode != null)
+				currentNode = newNode;
+			
+			JSONType nodeType = currentNode.getType();
+			String nodeSpecification = currentNode.getSpecification();
+			Descriptor nodeReference = currentNode.getReference();
+
+			switch (classType) 
+			{
+			case "JsonArray":
+				System.out.println("\nARRAY: \n" + key + " = " + value);
+
+				for(JsonElement elem : entry.getValue().getAsJsonArray())
+				{
+					// special case where PARAMS originaly belongs to START node but we need them at FUNCTION node
+					if(key.equals("params"))
+					{
+						Node param = new Node(JSONType.PARAM);
+						analyzeBody(elem.getAsJsonObject(),param);
+						newNode.addAdj(param);
+					}
+					else
+					{
+						analyzeBody(elem.getAsJsonObject(),currentNode);
+					}
+				}
+
+				break;
+			case "JsonPrimitive":
+				System.out.println("\nPRIMITIVE: \n" +  key + " = " + value);
+				
+				//function : type(FUNCTION), specification(function name), reference(NULL)
+				if(value.equals("\"FunctionDeclaration\""))
+				{
+					//create new Node
+					newNode = createNewNode(currentNode, JSONType.FUNCTION, null, null);
+					
+					//create one symbol table per function
+					tables.add(new SymbolTable());
+				}
+				else if(key.equals("name") && nodeType == JSONType.FUNCTION)
+				{
+					//set function name at node and at the symbolTable
+					currentNode.setSpecification(value);
+					addNameToLastST(value);
+				}
+				
+				//return : type(RETURN), specification(NULL), reference(var name and type)
+				else if(value.equals("\"ReturnStatement\"") && nodeType == JSONType.FUNCTION)
+				{
+					//create new Node
+					newNode = createNewNode(currentNode, JSONType.RETURN, null, null);
+				}
+				else if(key.equals("name") && nodeType == JSONType.RETURN && nodeReference == null)
+				{
+					Descriptor d = setReference(currentNode,value);
+					addReturnToLastST(d);
+				}
+				
+				//parameter : type(PARAM), specification(NULL), reference(var name and DataType)
+				else if(key.equals("name") && nodeType == JSONType.PARAM && nodeReference == null)
+				{
+					//param descriptor starts with unknown dataType
+					Descriptor d = new Descriptor(value);
+					//add parameter to SymbolTable and set a reference to the descriptor at the HIR
+					addParamToLastST(d);
+					currentNode.setReference(d);
+				}
+				
+				//local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
+				else if(value.equals("\"VariableDeclaration\""))
+				{
+					//create new Node
+					newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
+				}
+				else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
+				{
+					//create descriptor, add to node and to SymbolTable
+					Descriptor d = new Descriptor(value);
+					currentNode.setReference(d);
+					addLocalToLastST(d);
+				}
+				
+				//assignment : type(ASSIGNMENT), specification(=), reference(variable name and type)
+				else if(value.equals("\"AssignmentExpression\""))
+				{
+					newNode = createNewNode(currentNode, JSONType.ASSIGNMENT, "store", null);
+				}
+				
+				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
+				else if(value.equals("\"BinaryExpression\""))
+				{
+					newNode = createNewNode(currentNode, JSONType.OPERATION, null, null);
+				}
+				//add specification to OPERATION
+				else if(key.equals("operator") && nodeType == JSONType.OPERATION)
+				{
+					currentNode.setSpecification(value);
+				}
+				
+				else if(value.equals("\"ArrayExpression\"") && nodeType == JSONType.VARIABLEDECLARATION)
+				{
+					currentNode.setSpecification("storearray");
+				}
+				
+				//literal : type(dataType), specification(data), specification(NULL)
+				else if(value.equals("\"Literal\""))
+				{
+					newNode = createNewNode(currentNode, null, null, null);
+				}
+				else if(key.equals("raw") && newNode != null)
+				{
+					//ATENCAO : falta verificar o tipo!!
+					currentNode.setType(JSONType.INT);
+					currentNode.setSpecification(value);
+				}
+			
+				//when we need to load some descriptor, and don't want to store it ==> create IDENTIFIER node
+				//special cases that have identifiers but we'll use them on a different way : FUNCTION, PARAM and RETURN
+				//identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
+				else if(value.equals("\"Identifier\"") && 
+						!(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
+				{
+					//The first descriptor was stored, so the second will be a IDENTIFIER
+					if(nodeSpecification.equals("store") && nodeReference != null)
+					{
+						newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
+					}
+				}
+				
+				//adding a descriptor to some load/store node
+				else if(key.equals("name") && 
+						(nodeSpecification.equals("store") || nodeSpecification.equals("load")) && 
+						nodeReference == null)
+				{
+					setReference(currentNode, value);
+				}
+			
+				break;
+			case "JsonObject":
+				System.out.println("\nOBJECT: \n" +  key + " = " + value);
+
+				analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
+			
+				break;
+			default:
+				System.out.println("OTHER");
+				break;
+			}	
+		}
+		
+		System.out.println(" --- end --- ");
+	}
+	
+	private Node createNewNode(Node node, JSONType type, String specification, Descriptor reference)
+	{
+		Node newNode = new Node();
+		if(type != null)
+			newNode = new Node(type);
+		
+		newNode.setSpecification(specification);
+		newNode.setReference(reference);
+		node.addAdj(newNode);
+		
+		return newNode;
+	}
+
+	private Descriptor setReference(Node node, String value)
+	{
+		Descriptor d = findDescriptorAtLastST(value); 
+		node.setReference(d);
+		
+		return d;
+	}
+	
 	private void addNameToLastST(String name){
 		SymbolTable st = tables.get(tables.size()-1);
 		st.addName(name);
@@ -339,5 +315,43 @@ public class Parser
 			d = st.findLocal(value);
 
 		return d;
+	}
+	
+	private void printHIR(Node n,String spacement)
+	{
+		System.out.println();
+		System.out.println(spacement + "Type  : " + n.getType().toString());
+		System.out.println(spacement + "Specification : "+n.getSpecification());
+
+		Descriptor d = n.getReference();
+		if(d != null)
+			System.out.println(spacement + "Descriptor ( Name : "+d.name + " | Type : "+d.type+" )");
+
+		for(Node n1 : n.getAdj())
+		{
+			printHIR(n1, spacement+"- ");
+		}
+	}
+
+	private void printSymbolTable()
+	{
+		System.out.println();
+
+		for(SymbolTable st : tables)
+		{
+			System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
+
+			for(Descriptor d : st.params)
+				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
+
+			System.out.println("   Locals : ");
+			for(Descriptor d : st.locals)
+				System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
+
+			if(st.functionReturn != null)
+				System.out.println("   Return : \n      Name : "+st.functionReturn.name + "   AND   Type : "+st.functionReturn.type+"\n");	
+			else
+				System.out.println("   Return : void\n"); 
+		}
 	}
 }

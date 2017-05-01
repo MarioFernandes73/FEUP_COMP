@@ -5,18 +5,9 @@
             "type": "FunctionDeclaration",
             "id": {
                 "type": "Identifier",
-                "name": "test"
+                "name": "test1"
             },
-            "params": [
-                {
-                    "type": "Identifier",
-                    "name": "i"
-                },
-                {
-                    "type": "Identifier",
-                    "name": "j"
-                }
-            ],
+            "params": [],
             "body": {
                 "type": "BlockStatement",
                 "body": [
@@ -54,11 +45,117 @@
                             "operator": "=",
                             "left": {
                                 "type": "Identifier",
-                                "name": "i"
+                                "name": "answer"
                             },
                             "right": {
-                                "type": "Identifier",
-                                "name": "answer"
+                                "type": "BinaryExpression",
+                                "operator": "+",
+                                "left": {
+                                    "type": "Identifier",
+                                    "name": "answer"
+                                },
+                                "right": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "generator": false,
+            "expression": false
+        },
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "test2"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "i"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "j"
+                }
+            ],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "x"
+                                },
+                                "init": {
+                                    "type": "ArrayExpression",
+                                    "elements": [
+                                        {
+                                            "type": "Literal",
+                                            "value": 0,
+                                            "raw": "0"
+                                        },
+                                        {
+                                            "type": "Literal",
+                                            "value": 1,
+                                            "raw": "1"
+                                        },
+                                        {
+                                            "type": "Literal",
+                                            "value": 2,
+                                            "raw": "2"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "MemberExpression",
+                                "computed": true,
+                                "object": {
+                                    "type": "Identifier",
+                                    "name": "x"
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "i"
+                                }
+                            },
+                            "right": {
+                                "type": "BinaryExpression",
+                                "operator": "+",
+                                "left": {
+                                    "type": "MemberExpression",
+                                    "computed": true,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "x"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "j"
+                                    }
+                                },
+                                "right": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                }
                             }
                         }
                     },
@@ -66,7 +163,7 @@
                         "type": "ReturnStatement",
                         "argument": {
                             "type": "Identifier",
-                            "name": "i"
+                            "name": "j"
                         }
                     }
                 ]

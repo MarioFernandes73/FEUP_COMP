@@ -19,10 +19,12 @@ public class Resources
 		PARAM,					//function parameter
 		RETURN,					//function return
 		INT, DOUBLE, FLOAT, STRING, BOOLEAN,	//data types for literals
-		IDENTIFIER,				//descriptor	(load)
-		VARIABLEDECLARATION,	//var a = b 	(store)
-		ASSIGNMENT,				// a = b		(store)
-		OPERATION				// + - * /
+		IDENTIFIER,				//descriptor	(load or loadarray)
+		VARIABLEDECLARATION,	//var a = b 	(store)  	
+								//var a = [0,2] (storearray)
+		ASSIGNMENT,				//a = b			(store)
+								//a[i] = 2 		(storearray)
+		OPERATION				//+ - * /
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";
