@@ -5,24 +5,28 @@
             "type": "FunctionDeclaration",
             "id": {
                 "type": "Identifier",
-                "name": "test4"
+                "name": "test5"
             },
-            "params": [
-                {
-                    "type": "Identifier",
-                    "name": "y"
-                }
-            ],
+            "params": [],
             "body": {
                 "type": "BlockStatement",
                 "body": [
                     {
-                        "type": "WhileStatement",
-                        "test": {
-                            "type": "Literal",
-                            "value": true,
-                            "raw": "true"
-                        },
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "x"
+                                },
+                                "init": null
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "DoWhileStatement",
                         "body": {
                             "type": "BlockStatement",
                             "body": [
@@ -33,48 +37,29 @@
                                         "operator": "=",
                                         "left": {
                                             "type": "Identifier",
-                                            "name": "y"
+                                            "name": "x"
                                         },
                                         "right": {
-                                            "type": "BinaryExpression",
-                                            "operator": "*",
-                                            "left": {
-                                                "type": "Identifier",
-                                                "name": "y"
-                                            },
-                                            "right": {
-                                                "type": "Literal",
-                                                "value": 2,
-                                                "raw": "2"
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "ExpressionStatement",
-                                    "expression": {
-                                        "type": "AssignmentExpression",
-                                        "operator": "=",
-                                        "left": {
-                                            "type": "Identifier",
-                                            "name": "y"
-                                        },
-                                        "right": {
-                                            "type": "BinaryExpression",
-                                            "operator": "/",
-                                            "left": {
-                                                "type": "Identifier",
-                                                "name": "y"
-                                            },
-                                            "right": {
-                                                "type": "Literal",
-                                                "value": 2,
-                                                "raw": "2"
-                                            }
+                                            "type": "Literal",
+                                            "value": 6,
+                                            "raw": "6"
                                         }
                                     }
                                 }
                             ]
+                        },
+                        "test": {
+                            "type": "BinaryExpression",
+                            "operator": "==",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "x"
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "value": 6,
+                                "raw": "6"
+                            }
                         }
                     }
                 ]

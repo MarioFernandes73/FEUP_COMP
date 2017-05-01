@@ -25,9 +25,10 @@ public class Resources
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
 		OPERATION,				//+ - * /
-		IFSTATEMENT,
-		ELSE,
-		WHILESTATEMENT
+		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)
+		ELSE,					//ifstatement child; all child's are consequences
+		WHILESTATEMENT,			//first child node : test condition; others : consequence
+		DOWHILESTATEMENT		//last child node : test condition; others : consequence
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";

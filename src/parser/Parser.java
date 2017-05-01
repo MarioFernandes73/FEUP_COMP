@@ -200,15 +200,22 @@ public class Parser
 					newNode = createNewNode(currentNode, JSONType.ASSIGNMENT, "store", null);
 				}
 				
-				//ifstatement : type(IFSTATEMENT), specification(null), reference(null)
+				//if statement : type(IFSTATEMENT), specification(null), reference(null)
 				else if(value.equals("\"IfStatement\""))
 				{
 					newNode = createNewNode(currentNode, JSONType.IFSTATEMENT, null, null);
 				}
 				
+				//while statement : type(WHILESTATEMENT), specification(null), reference(null)
 				else if(value.equals("\"WhileStatement\""))
 				{
 					newNode = createNewNode(currentNode, JSONType.WHILESTATEMENT, null, null);
+				}
+				
+				//do while statement : type(DOWHILESTATEMENT), specification(null), reference(null)
+				else if(value.equals("\"DoWhileStatement\""))
+				{
+					newNode = createNewNode(currentNode, JSONType.DOWHILESTATEMENT, null, null);
 				}
 				
 				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)

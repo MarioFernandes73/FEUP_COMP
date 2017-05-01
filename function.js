@@ -37,3 +37,12 @@ function test4(y)
 		y = y / 2;
 	}
 }
+
+//teste atual
+function test5()
+{
+	var x;
+	do{
+		x = 6;
+	}while(x == 6);
+}
