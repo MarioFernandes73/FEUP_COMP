@@ -5,7 +5,7 @@
             "type": "FunctionDeclaration",
             "id": {
                 "type": "Identifier",
-                "name": "test3"
+                "name": "test4"
             },
             "params": [
                 {
@@ -17,34 +17,13 @@
                 "type": "BlockStatement",
                 "body": [
                     {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
-                                    "type": "Identifier",
-                                    "name": "x"
-                                },
-                                "init": null
-                            }
-                        ],
-                        "kind": "var"
-                    },
-                    {
-                        "type": "IfStatement",
+                        "type": "WhileStatement",
                         "test": {
-                            "type": "BinaryExpression",
-                            "operator": "<",
-                            "left": {
-                                "type": "Identifier",
-                                "name": "x"
-                            },
-                            "right": {
-                                "type": "Identifier",
-                                "name": "y"
-                            }
+                            "type": "Literal",
+                            "value": true,
+                            "raw": "true"
                         },
-                        "consequent": {
+                        "body": {
                             "type": "BlockStatement",
                             "body": [
                                 {
@@ -54,11 +33,20 @@
                                         "operator": "=",
                                         "left": {
                                             "type": "Identifier",
-                                            "name": "x"
+                                            "name": "y"
                                         },
                                         "right": {
-                                            "type": "Identifier",
-                                            "name": "y"
+                                            "type": "BinaryExpression",
+                                            "operator": "*",
+                                            "left": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "right": {
+                                                "type": "Literal",
+                                                "value": 2,
+                                                "raw": "2"
+                                            }
                                         }
                                     }
                                 },
@@ -69,75 +57,24 @@
                                         "operator": "=",
                                         "left": {
                                             "type": "Identifier",
-                                            "name": "x"
-                                        },
-                                        "right": {
-                                            "type": "BinaryExpression",
-                                            "operator": "+",
-                                            "left": {
-                                                "type": "Identifier",
-                                                "name": "x"
-                                            },
-                                            "right": {
-                                                "type": "Literal",
-                                                "value": 4,
-                                                "raw": "4"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "alternate": {
-                            "type": "BlockStatement",
-                            "body": [
-                                {
-                                    "type": "ExpressionStatement",
-                                    "expression": {
-                                        "type": "AssignmentExpression",
-                                        "operator": "=",
-                                        "left": {
-                                            "type": "Identifier",
-                                            "name": "x"
-                                        },
-                                        "right": {
-                                            "type": "Identifier",
                                             "name": "y"
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "ExpressionStatement",
-                                    "expression": {
-                                        "type": "AssignmentExpression",
-                                        "operator": "=",
-                                        "left": {
-                                            "type": "Identifier",
-                                            "name": "x"
                                         },
                                         "right": {
                                             "type": "BinaryExpression",
-                                            "operator": "+",
+                                            "operator": "/",
                                             "left": {
                                                 "type": "Identifier",
-                                                "name": "x"
+                                                "name": "y"
                                             },
                                             "right": {
                                                 "type": "Literal",
-                                                "value": 6,
-                                                "raw": "6"
+                                                "value": 2,
+                                                "raw": "2"
                                             }
                                         }
                                     }
                                 }
                             ]
-                        }
-                    },
-                    {
-                        "type": "ReturnStatement",
-                        "argument": {
-                            "type": "Identifier",
-                            "name": "x"
                         }
                     }
                 ]

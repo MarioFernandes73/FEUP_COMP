@@ -13,7 +13,6 @@ function test2(i,j)
 	return j;
 }
 
-//teste atual
 function test3(y)
 {
 	var x;
@@ -28,4 +27,13 @@ function test3(y)
 	}
 	
 	return x;
+}
+
+function test4(y)
+{
+	while(true)
+	{
+		y = y * 2;
+		y = y / 2;
+	}
 }

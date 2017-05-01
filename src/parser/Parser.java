@@ -201,10 +201,14 @@ public class Parser
 				}
 				
 				//ifstatement : type(IFSTATEMENT), specification(null), reference(null)
-				//will have 2 or 3 child's: test condition, consequence, then (optional)
 				else if(value.equals("\"IfStatement\""))
 				{
 					newNode = createNewNode(currentNode, JSONType.IFSTATEMENT, null, null);
+				}
+				
+				else if(value.equals("\"WhileStatement\""))
+				{
+					newNode = createNewNode(currentNode, JSONType.WHILESTATEMENT, null, null);
 				}
 				
 				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
