@@ -22,7 +22,7 @@ public class Resources
 		IDENTIFIER,				//descriptor	(load)
 		VARIABLEDECLARATION,	//var a = b 	(store)
 		ASSIGNMENT,				// a = b		(store)
-		OPERATION,				// + - * /
+		OPERATION				// + - * /
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";

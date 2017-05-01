@@ -57,9 +57,8 @@
                                 "name": "i"
                             },
                             "right": {
-                                "type": "Literal",
-                                "value": 5,
-                                "raw": "5"
+                                "type": "Identifier",
+                                "name": "answer"
                             }
                         }
                     },
