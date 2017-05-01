@@ -200,6 +200,13 @@ public class Parser
 					newNode = createNewNode(currentNode, JSONType.ASSIGNMENT, "store", null);
 				}
 				
+				//ifstatement : type(IFSTATEMENT), specification(null), reference(null)
+				//will have 2 or 3 child's: test condition, consequence, then (optional)
+				else if(value.equals("\"IfStatement\""))
+				{
+					newNode = createNewNode(currentNode, JSONType.IFSTATEMENT, null, null);
+				}
+				
 				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
 				else if(value.equals("\"BinaryExpression\""))
 				{

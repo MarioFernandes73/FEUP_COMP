@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) {
 
     	//o ficheiro sera recebido como parametro
-    	new Parser("function.json");
+    	new Parser("test.json");
     	
     }
 }

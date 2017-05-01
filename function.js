@@ -12,3 +12,16 @@ function test2(i,j)
 	x[i-1] = x[0] + 1;
 	return j;
 }
+
+//teste atual
+
+function test3(y)
+{
+	var x;
+	if(x < y)
+		x = 4;
+	else
+		x = 5;
+	
+	return x;
+}

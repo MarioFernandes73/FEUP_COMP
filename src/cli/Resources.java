@@ -24,7 +24,8 @@ public class Resources
 								//var a = [0,2] (storearray)
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
-		OPERATION				//+ - * /
+		OPERATION,				//+ - * /
+		IFSTATEMENT
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";
