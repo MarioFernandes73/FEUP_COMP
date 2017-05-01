@@ -132,8 +132,17 @@
                                     "name": "x"
                                 },
                                 "property": {
-                                    "type": "Identifier",
-                                    "name": "i"
+                                    "type": "BinaryExpression",
+                                    "operator": "-",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": "i"
+                                    },
+                                    "right": {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1"
+                                    }
                                 }
                             },
                             "right": {
@@ -147,8 +156,9 @@
                                         "name": "x"
                                     },
                                     "property": {
-                                        "type": "Identifier",
-                                        "name": "j"
+                                        "type": "Literal",
+                                        "value": 0,
+                                        "raw": "0"
                                     }
                                 },
                                 "right": {

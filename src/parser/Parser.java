@@ -211,10 +211,17 @@ public class Parser
 					currentNode.setSpecification(value);
 				}
 				
-				else if(value.equals("\"ArrayExpression\"") && nodeType == JSONType.VARIABLEDECLARATION)
+				//
+				else if((value.equals("\"ArrayExpression\"") && nodeType == JSONType.VARIABLEDECLARATION) ||
+						value.equals("\"MemberExpression\"") && nodeType == JSONType.ASSIGNMENT)
 				{
 					currentNode.setSpecification("storearray");
 				}
+				else if(value.equals("\"MemberExpression\"") )
+				{
+					newNode = createNewNode(currentNode,JSONType.IDENTIFIER,"loadarray",null);
+				}
+				
 				
 				//literal : type(dataType), specification(data), specification(NULL)
 				else if(value.equals("\"Literal\""))
@@ -234,8 +241,10 @@ public class Parser
 				else if(value.equals("\"Identifier\"") && 
 						!(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
 				{
-					//The first descriptor was stored, so the second will be a IDENTIFIER
-					if(nodeSpecification.equals("store") && nodeReference != null)
+		
+					//
+					if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load"))
+							&& nodeReference == null))
 					{
 						newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
 					}
@@ -243,8 +252,8 @@ public class Parser
 				
 				//adding a descriptor to some load/store node
 				else if(key.equals("name") && 
-						(nodeSpecification.equals("store") || nodeSpecification.equals("load")) && 
-						nodeReference == null)
+						(nodeSpecification.equals("store") || nodeSpecification.equals("load")) 
+						&& nodeReference == null)
 				{
 					setReference(currentNode, value);
 				}
