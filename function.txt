@@ -1,6 +1,6 @@
 function test(i,j)
 {
 	var answer = 6 * 7;
-	var x = 5;
-	return x;
+	i = 5;
+	return i;
 }

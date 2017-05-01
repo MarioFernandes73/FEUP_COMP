@@ -16,11 +16,13 @@ public class Resources
 	public enum JSONType{
 		START,					//first node
 		FUNCTION,				//function node
-		VARIABLEDECLARATION,	//variableDeclaration
 		PARAM,					//function parameter
-		OPERATION,				// + - * / ==
-		INT, DOUBLE, FLOAT, STRING, BOOLEAN,	//data types for literals
 		RETURN,					//function return
+		INT, DOUBLE, FLOAT, STRING, BOOLEAN,	//data types for literals
+		IDENTIFIER,				//descriptor	(load)
+		VARIABLEDECLARATION,	//var a = b 	(store)
+		ASSIGNMENT,				// a = b		(store)
+		OPERATION,				// + - * /
 	}
 
     final public static String DEFAULT_CHAR_SET = "UTF-8";

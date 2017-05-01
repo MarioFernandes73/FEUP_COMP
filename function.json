@@ -1,4 +1,4 @@
-﻿{
+{
     "type": "Program",
     "body": [
         {
@@ -48,28 +48,26 @@
                         "kind": "var"
                     },
                     {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
-                                    "type": "Identifier",
-                                    "name": "x"
-                                },
-                                "init": {
-                                    "type": "Literal",
-                                    "value": 5,
-                                    "raw": "5"
-                                }
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "i"
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "value": 5,
+                                "raw": "5"
                             }
-                        ],
-                        "kind": "var"
+                        }
                     },
                     {
                         "type": "ReturnStatement",
                         "argument": {
                             "type": "Identifier",
-                            "name": "x"
+                            "name": "i"
                         }
                     }
                 ]

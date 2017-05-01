@@ -92,13 +92,24 @@ public class Parser
 			case "JsonPrimitive":
 				System.out.println("\nPRIMITIVE: \n" +  key + " = " + value);
 
+				//when we need to load some descriptor, and dont want to store it ==> create IDENTIFIER node
+				//identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
+				/*if(value.equals("\"Identifier\""))
+				{
+					newNode = new Node(JSONType.IDENTIFIER);
+					node.addAdj(newNode);
+				}
+				else*/ if(key.equals("name") && node.getType() == JSONType.ASSIGNMENT )
+				{
+					Descriptor d = findDescriptorAtLastST(value); 
+					node.setReference(d);
+				}
 				//function : type(FUNCTION), specification(function name), reference(NULL)
-				if(value.equals("\"FunctionDeclaration\""))
+				else if(value.equals("\"FunctionDeclaration\""))
 				{
 					//create new Node
 					newNode = new Node(JSONType.FUNCTION);
 					node.addAdj(newNode);
-
 					//create one symbol table per function
 					tables.add(new SymbolTable());
 				}
@@ -114,15 +125,14 @@ public class Parser
 					newNode = new Node(JSONType.RETURN);
 					node.addAdj(newNode);
 				}
-				else if(key.equals("name") && (node.getType() == JSONType.RETURN))
+				else if(key.equals("name") && node.getType() == JSONType.RETURN && node.getReference() == null)
 				{
 					Descriptor d = findDescriptorAtLastST(value); 
-
 					node.setReference(d);
 					addReturnToLastST(d);
 				}
 				//parameter : type(PARAM), specification(NULL), reference(var name and DataType)
-				else if(key.equals("name") && node.getType() == JSONType.PARAM)
+				else if(key.equals("name") && node.getType() == JSONType.PARAM && node.getReference() == null)
 				{
 					//param descriptor starts with unknown dataType
 					Descriptor d = new Descriptor(value);
@@ -135,11 +145,9 @@ public class Parser
 				{
 					//create new Node
 					newNode = new Node(JSONType.VARIABLEDECLARATION);
-
-					System.out.println("Adicionou variable");
 					node.addAdj(newNode);
 				}
-				else if(key.equals("name") && node.getType() == JSONType.VARIABLEDECLARATION)
+				else if(key.equals("name") && node.getType() == JSONType.VARIABLEDECLARATION && node.getReference() == null)
 				{
 					//create descriptor, add to node and to SymbolTable
 					Descriptor d = new Descriptor(value);
@@ -150,8 +158,6 @@ public class Parser
 				else if(value.equals("\"BinaryExpression\""))
 				{
 					newNode = new Node(JSONType.OPERATION);
-
-					System.out.println("Adicionou operator");
 					node.addAdj(newNode);
 				}
 				//add specification to OPERATION
@@ -162,15 +168,28 @@ public class Parser
 				else if(value.equals("\"Literal\""))
 				{
 					newNode = new Node();
-
-					System.out.println("Adicionou literal");
 					node.addAdj(newNode);
 				}
-				else if(key.equals("raw"))
+				else if(key.equals("raw") && newNode != null)
 				{
 					//ATENCAO : falta verificar o tipo!!
 					newNode.setType(JSONType.INT);
 					newNode.setSpecification(value);
+				}
+				//assignment : type(ASSIGNMENT), specification(=), reference(variable name and type)
+				else if(value.equals("\"AssignmentExpression\""))
+				{
+					newNode = new Node(JSONType.ASSIGNMENT);
+					node.addAdj(newNode);
+				}
+				else if(key.equals("operator") && newNode.getType() == JSONType.ASSIGNMENT)
+				{
+					newNode.setSpecification(value);
+				}
+				else if(key.equals("name") && node.getType() == JSONType.ASSIGNMENT && node.getReference() == null)
+				{
+					Descriptor d = findDescriptorAtLastST(value); 
+					node.setReference(d);
 				}
 
 				break;
