@@ -229,15 +229,16 @@ public class Parser
 					currentNode.setSpecification(value);
 				}
 				
-				//
+				//NEW
 				else if((value.equals("\"ArrayExpression\"") && nodeType == JSONType.VARIABLEDECLARATION) ||
 						value.equals("\"MemberExpression\"") && nodeType == JSONType.ASSIGNMENT)
 				{
 					currentNode.setSpecification("storearray");
+					newNode = createNewNode(currentNode,JSONType.ARRAY,"loadarray",null);
 				}
 				else if(value.equals("\"MemberExpression\"") )
 				{
-					newNode = createNewNode(currentNode,JSONType.IDENTIFIER,"loadarray",null);
+					newNode = createNewNode(currentNode,JSONType.ARRAY,"loadarray",null);
 				}
 				
 				

@@ -1,5 +1,7 @@
 package cli;
 
+import parser.CodeGenerator;
+
 /**
  * Copyright 2017 SPeCS.
  * 
@@ -20,7 +22,9 @@ public class Main {
     public static void main(String[] args) {
 
     	//o ficheiro sera recebido como parametro
-    	new Parser("test.json");
-    	
+    	Parser p = new Parser("test.json");
+    	CodeGenerator codegenerator = new CodeGenerator(p.hir,p.tables);
+    	System.out.println("\n\n ====================== CODE ========================\n");
+    	System.out.println(codegenerator.getCode());
     }
 }

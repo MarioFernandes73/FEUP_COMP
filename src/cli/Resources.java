@@ -2,6 +2,8 @@ package cli;
 
 public class Resources 
 {
+	public final static String DEF_SPC = new String("  ");	//DEFAULT_SPACE
+	
 	public enum DataType{
 		BOOLEAN, ARRAYBOOLEAN, 
 		INT, ARRAYINT, 
@@ -24,6 +26,7 @@ public class Resources
 								//var a = [0,2] (storearray)
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
+		ARRAY,
 		OPERATION,				//+ - * /
 		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)
 		ELSE,					//ifstatement child; all child's are consequences
