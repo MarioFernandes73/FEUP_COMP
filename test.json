@@ -42,6 +42,14 @@
                                     "value": 5,
                                     "raw": "5"
                                 }
+                            },
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "b"
+                                },
+                                "init": null
                             }
                         ],
                         "kind": "var"
@@ -91,9 +99,8 @@
                     {
                         "type": "ReturnStatement",
                         "argument": {
-                            "type": "Literal",
-                            "value": 5,
-                            "raw": "5"
+                            "type": "Identifier",
+                            "name": "b"
                         }
                     }
                 ]
