@@ -26,7 +26,8 @@ public class Resources
 								//var a = [0,2] (storearray)
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
-		ARRAY,
+		ARRAY,					//a[i]
+		ARRAYCONTENT,			//[a,b,c,d]
 		OPERATION,				//+ - * /
 		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)
 		ELSE,					//ifstatement child; all child's are consequences

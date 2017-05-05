@@ -2,6 +2,7 @@ package parser;
 
 import java.util.ArrayList;
 import cli.Resources;
+import cli.Resources.DataType;
 import cli.Resources.JSONType;
 import jdk.management.resource.ResourceAccuracy;
 
@@ -33,9 +34,8 @@ public class CodeGenerator {
 
 		switch (type) {
 		case START:{
-			for(Node n : node.getAdj()){
+			for(Node n : node.getAdj())
 				content += generate(n) + "\n";
-			}
 			break;
 		}
 		case FUNCTION:{
@@ -60,6 +60,11 @@ public class CodeGenerator {
 		}
 		case ARRAY:{
 			content += handleArray(node.getAdj());
+			break;
+		}
+		case ARRAYCONTENT:{
+			content += handleArrayContent(node.getAdj());
+			break;
 		}
 		default:
 			break;
@@ -109,7 +114,7 @@ public class CodeGenerator {
 		for(Node n : node.getAdj()){
 			if(firstDeclaration){ 
 				firstDeclaration = false;
-				code += n.getType() + " ";
+				code += getType(n) + " ";
 			}
 			else code += ", ";
 			code += generate(n);
@@ -143,15 +148,28 @@ public class CodeGenerator {
 		return code;
 	}
 	
+	public String handleArrayContent(ArrayList<Node> subnodes){
+		String code = new String("[");
+		boolean first = true;
+		
+		for(Node n : subnodes){
+			if(first) first = false;
+			else code += ", ";
+			code +=generate(n);
+		}
+		code+="]";
+		return code;
+	}
+	
 	public String getCode(){
 		return code;
 	}
 
-	public JSONType getType(Node n){
+	public DataType getType(Node n){
 		if(n.getReference() == null){
 			return getType(n.getAdj().get(0));
 		}
 		else
-			return n.getType();
+			return n.getReference().type;
 	}
 }

@@ -233,16 +233,26 @@ public class Parser
 				}
 				
 				//NEW
-				else if((value.equals("ArrayExpression") && nodeType == JSONType.VARIABLEDECLARATION) ||
-						value.equals("MemberExpression") && nodeType == JSONType.ASSIGNMENT)
+				else if(value.equals("ArrayExpression") && nodeType == JSONType.VARIABLEDECLARATION)
 				{
+					currentNode.setSpecification("storearray");
+					newNode = createNewNode(currentNode,JSONType.ARRAYCONTENT,"storearray",null);
+				}
+				//NEW
+				else if(value.equals("ArrayExpression")){
+					newNode = createNewNode(currentNode,JSONType.ARRAYCONTENT,"loadarray",null);
+				}
+				//NEW
+				else if(value.equals("MemberExpression") && nodeType == JSONType.ASSIGNMENT){
 					currentNode.setSpecification("storearray");
 					newNode = createNewNode(currentNode,JSONType.ARRAY,"loadarray",null);
 				}
-				else if(value.equals("MemberExpression") || value.equals("ArrayExpression"))
+				//NEW
+				else if(value.equals("MemberExpression"))
 				{
 					newNode = createNewNode(currentNode,JSONType.ARRAY,"loadarray",null);
 				}
+				
 				
 				
 				//literal : type(dataType), specification(data), specification(NULL)

@@ -38,18 +38,20 @@
                                     "name": "a"
                                 },
                                 "init": {
-                                    "type": "Literal",
-                                    "value": 5,
-                                    "raw": "5"
+                                    "type": "ArrayExpression",
+                                    "elements": [
+                                        {
+                                            "type": "Literal",
+                                            "value": 3,
+                                            "raw": "3"
+                                        },
+                                        {
+                                            "type": "Literal",
+                                            "value": 1,
+                                            "raw": "1"
+                                        }
+                                    ]
                                 }
-                            },
-                            {
-                                "type": "VariableDeclarator",
-                                "id": {
-                                    "type": "Identifier",
-                                    "name": "b"
-                                },
-                                "init": null
                             }
                         ],
                         "kind": "var"
