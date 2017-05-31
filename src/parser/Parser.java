@@ -41,6 +41,11 @@ public class Parser
 		printHIR(hir,"");	
 		System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
 		printSymbolTable();
+
+
+		//generate code
+		CodeGenerator generator = new CodeGenerator(hir,tables);
+		System.out.println(generator.getCode());
 	}
 	
 	/**
@@ -109,8 +114,8 @@ public class Parser
 
 			classType = entry.getValue().getClass().getSimpleName();
 			key = entry.getKey().toString();
-			value = entry.getValue().toString();
-			
+			value = entry.getValue().toString().replaceAll("\"", "");
+
 			if(newNode != null)
 				currentNode = newNode;
 			
@@ -143,7 +148,7 @@ public class Parser
 				System.out.println("\nPRIMITIVE: \n" +  key + " = " + value);
 				
 				//function : type(FUNCTION), specification(function name), reference(NULL)
-				if(value.equals("\"FunctionDeclaration\""))
+				if(value.equals("FunctionDeclaration"))
 				{
 					//create new Node
 					newNode = createNewNode(currentNode, JSONType.FUNCTION, null, null);
@@ -159,7 +164,7 @@ public class Parser
 				}
 				
 				//return : type(RETURN), specification(NULL), reference(var name and type)
-				else if(value.equals("\"ReturnStatement\"") && nodeType == JSONType.FUNCTION)
+				else if(value.equals("ReturnStatement") && nodeType == JSONType.FUNCTION)
 				{
 					//create new Node
 					newNode = createNewNode(currentNode, JSONType.RETURN, null, null);
@@ -181,7 +186,7 @@ public class Parser
 				}
 				
 				//local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
-				else if(value.equals("\"VariableDeclaration\""))
+				else if(value.equals("VariableDeclaration"))
 				{
 					//create new Node
 					newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
@@ -195,31 +200,31 @@ public class Parser
 				}
 				
 				//assignment : type(ASSIGNMENT), specification(=), reference(variable name and type)
-				else if(value.equals("\"AssignmentExpression\""))
+				else if(value.equals("AssignmentExpression"))
 				{
 					newNode = createNewNode(currentNode, JSONType.ASSIGNMENT, "store", null);
 				}
 				
 				//if statement : type(IFSTATEMENT), specification(null), reference(null)
-				else if(value.equals("\"IfStatement\""))
+				else if(value.equals("IfStatement"))
 				{
 					newNode = createNewNode(currentNode, JSONType.IFSTATEMENT, null, null);
 				}
 				
 				//while statement : type(WHILESTATEMENT), specification(null), reference(null)
-				else if(value.equals("\"WhileStatement\""))
+				else if(value.equals("WhileStatement"))
 				{
 					newNode = createNewNode(currentNode, JSONType.WHILESTATEMENT, null, null);
 				}
 				
 				//do while statement : type(DOWHILESTATEMENT), specification(null), reference(null)
-				else if(value.equals("\"DoWhileStatement\""))
+				else if(value.equals("DoWhileStatement"))
 				{
 					newNode = createNewNode(currentNode, JSONType.DOWHILESTATEMENT, null, null);
 				}
 				
 				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
-				else if(value.equals("\"BinaryExpression\""))
+				else if(value.equals("BinaryExpression"))
 				{
 					newNode = createNewNode(currentNode, JSONType.OPERATION, null, null);
 				}
@@ -242,7 +247,7 @@ public class Parser
 				
 				
 				//literal : type(dataType), specification(data), specification(NULL)
-				else if(value.equals("\"Literal\""))
+				else if(value.equals("Literal"))
 				{
 					newNode = createNewNode(currentNode, null, null, null);
 				}
@@ -256,7 +261,7 @@ public class Parser
 				//when we need to load some descriptor, and don't want to store it ==> create IDENTIFIER node
 				//special cases that have identifiers but we'll use them on a different way : FUNCTION, PARAM and RETURN
 				//identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
-				else if(value.equals("\"Identifier\"") && 
+				else if(value.equals("Identifier") &&
 						!(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
 				{
 		

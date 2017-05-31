@@ -25,6 +25,7 @@ public class Resources
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
 		ARRAY,
+		ARRAYCONTENT,
 		OPERATION,				//+ - * /
 		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)
 		ELSE,					//ifstatement child; all child's are consequences
