@@ -10,6 +10,9 @@ Geração de Código
 
 ####  Declaration
 
+* Múltiplas declarações
+* Declarações com variáveis sem ser arrays
+
 #### Assignment
 
 #### Expressions
