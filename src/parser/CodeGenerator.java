@@ -117,31 +117,50 @@ public class CodeGenerator {
 
     private String handleVariableDeclaration(Node node){
         boolean firstDeclaration = true;
-        //tmp ate resolver varias declaracoes por linha
-        String code = new String();//node.getReference().type + " " + node.getReference().name);
 
-        System.out.println(node.getReference() + node.getSpecification() + node.getType());
+        String code = new String("");
 
-        for(Node n : node.getAdj()){
-            if(firstDeclaration){
+        //Multiple declarations in line
+        if(node.getAdj().size() > 0 && node.getAdj().get(0).getType() == JSONType.VARIABLEDECLARATION){
+            for(Node n : node.getAdj()){
+                System.out.println(n.getReference() + n.getSpecification() + n.getType());
 
-                firstDeclaration = false;
-                code += getType(n) + " ";
+                if(firstDeclaration){
+                    firstDeclaration = false;
+                    code += getType(n) + " ";
+                }
+                else code += ", ";
+                code += generate(n);
             }
-            else code += ", ";
-            code += generate(n);
         }
+        //Individual declaration
+        else{
+            code += node.getReference().name;
+
+            //If direct assignment
+            for(Node n : node.getAdj()){
+                code += " = " + generate(n);
+            }
+        }
+
         return code;
     }
 
     private String handleAssignment(Node node, ArrayList<Node> assignment){
         String code = new String("");
-        boolean left = true;
+        int i = 0;
 
-        for(Node n : assignment){
-            if(left) left = false;
-            else code += " = ";
-            code += generate(n);
+        code += node.getReference().name;
+
+        if(node.getSpecification().equals("storearray")){
+            /*
+            Tratar de arrays
+             */
+        }
+
+        while(i < node.getAdj().size()){
+            code += " = " + generate(node.getAdj().get(i));
+            i++;
         }
         return code;
     }

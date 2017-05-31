@@ -41,11 +41,6 @@ public class Parser
 		printHIR(hir,"");	
 		System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
 		printSymbolTable();
-
-
-		//generate code
-		CodeGenerator generator = new CodeGenerator(hir,tables);
-		System.out.println(generator.getCode());
 	}
 	
 	/**
@@ -191,6 +186,10 @@ public class Parser
 					//create new Node
 					newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
 				}
+                //NEW
+                else if(value.equals("VariableDeclarator")){
+                    newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
+                }
 				else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
 				{
 					//create descriptor, add to node and to SymbolTable
@@ -279,6 +278,7 @@ public class Parser
 						&& nodeReference == null)
 				{
 					setReference(currentNode, value);
+
 				}
 			
 				break;

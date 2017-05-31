@@ -7,10 +7,114 @@
                 "type": "Identifier",
                 "name": "hello"
             },
-            "params": [],
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "a"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "b"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "c"
+                }
+            ],
             "body": {
                 "type": "BlockStatement",
-                "body": []
+                "body": [
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "d"
+                                },
+                                "init": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "=",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": "b"
+                                    },
+                                    "right": {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "e"
+                                },
+                                "init": null
+                            },
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "f"
+                                },
+                                "init": null
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "c"
+                            },
+                            "right": {
+                                "type": "AssignmentExpression",
+                                "operator": "=",
+                                "left": {
+                                    "type": "Identifier",
+                                    "name": "b"
+                                },
+                                "right": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "=",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": "a"
+                                    },
+                                    "right": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "b"
+                                        },
+                                        "right": {
+                                            "type": "AssignmentExpression",
+                                            "operator": "=",
+                                            "left": {
+                                                "type": "Identifier",
+                                                "name": "a"
+                                            },
+                                            "right": {
+                                                "type": "Literal",
+                                                "value": 3,
+                                                "raw": "3"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "generator": false,
             "expression": false
