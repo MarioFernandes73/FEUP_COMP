@@ -58,14 +58,22 @@ public class CodeGenerator {
                 content += node.getSpecification();
                 break;
             }
-            case ARRAY:{
+            case OPERATION:{
+                content += handleOperation(node,node.getAdj());
+                break;
+            }
+            case IFSTATEMENT:{
+                content += handleIf(node.getAdj());
+                break;
+            }
+            /*case ARRAY:{
                 content += handleArray(node.getAdj());
                 break;
             }
             case ARRAYCONTENT:{
                 content += handleArrayContent(node.getAdj());
                 break;
-            }
+            }*/
             //Conditions
             //Loops
             default:
@@ -100,7 +108,7 @@ public class CodeGenerator {
                     code+= ")\n" + spacement + "{";
                     spacement += Resources.DEF_SPC;				//add 1 tab
                 }
-                code+="\n" + spacement + generate(c) + ";";
+                code+="\n" + spacement + generate(c) + endPunctuation(c.getType());
             }
         }
 
@@ -110,38 +118,57 @@ public class CodeGenerator {
             spacement += Resources.DEF_SPC;
         }
 
-        spacement.replaceFirst(Resources.DEF_SPC, "");			//rem 1 tab
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");			//rem 1 tab
         code+= spacement + "\n}";
         return code;
     }
 
     private String handleVariableDeclaration(Node node){
         boolean firstDeclaration = true;
-        //tmp ate resolver varias declaracoes por linha
-        String code = new String();//node.getReference().type + " " + node.getReference().name);
 
-        System.out.println(node.getReference() + node.getSpecification() + node.getType());
+        String code = new String("");
 
-        for(Node n : node.getAdj()){
-            if(firstDeclaration){
+        //Multiple declarations in line
+        if(node.getAdj().size() > 0 && node.getAdj().get(0).getType() == JSONType.VARIABLEDECLARATION){
+            for(Node n : node.getAdj()){
+                System.out.println(n.getReference() + n.getSpecification() + n.getType());
 
-                firstDeclaration = false;
-                code += getType(n) + " ";
+                if(firstDeclaration){
+                    firstDeclaration = false;
+                    code += getType(n) + " ";
+                }
+                else code += ", ";
+                code += generate(n);
             }
-            else code += ", ";
-            code += generate(n);
         }
+        //Individual declaration
+        else{
+            code += node.getReference().name;
+
+            //If direct assignment
+            for(Node n : node.getAdj()){
+                code += " = " + generate(n);
+            }
+        }
+
         return code;
     }
 
     private String handleAssignment(Node node, ArrayList<Node> assignment){
         String code = new String("");
-        boolean left = true;
+        int i = 0;
 
-        for(Node n : assignment){
-            if(left) left = false;
-            else code += " = ";
-            code += generate(n);
+        code += node.getReference().name;
+
+        if(node.getSpecification().equals("storearray")){
+            /*
+            Tratar de arrays
+             */
+        }
+
+        while(i < node.getAdj().size()){
+            code += " = " + generate(node.getAdj().get(i));
+            i++;
         }
         return code;
     }
@@ -173,8 +200,48 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleOperation(Node node, ArrayList<Node> subnodes){
+        String code = new String("");
+
+        if(node.getSpecification().equals("!")){
+            code += "!(" + generate(subnodes.get(0)) + ")";
+        }
+        else{
+            code += "(" + generate(node.getAdj().get(0)); //right
+            code += " " + node.getSpecification() + " ";        //operation
+            code += generate(node.getAdj().get(1)) + ")"; //left
+        }
+
+
+        return code;
+    }
+
+    public String handleIf(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "if(" + generate(subnodes.get(0)) + ")\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 1; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
     public String getCode(){
         return code;
+    }
+
+    public String endPunctuation(JSONType type){
+        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT)))
+            return ";";
+        else
+            return "";
     }
 
     public DataType getType(Node n){

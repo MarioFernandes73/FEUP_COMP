@@ -35,11 +35,6 @@ public class Parser
         printHIR(hir,"");
         System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
         printSymbolTable();
-
-
-        //generate code
-		/*CodeGenerator generator = new CodeGenerator(hir,tables);
-		System.out.println(generator.getCode());*/
     }
 
     /**
@@ -185,6 +180,10 @@ public class Parser
                         //create new Node
                         newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
                     }
+                    //NEW - cat
+                    else if(value.equals("VariableDeclarator")){
+                        newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
+                    }
                     else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
                     {
                         //create descriptor, add to node and to SymbolTable
@@ -253,6 +252,17 @@ public class Parser
                         currentNode.setSpecification(value);
                     }
 
+                    //NEW -cat
+                    else if((value.equals("ArrayExpression") && nodeType == JSONType.VARIABLEDECLARATION) ||
+                              value.equals("MemberExpression") && nodeType == JSONType.ASSIGNMENT)
+                    {
+                        currentNode.setSpecification("storearray");
+                    }
+                    else if(value.equals("MemberExpression") || value.equals("ArrayExpression"))
+                    {
+                        newNode = createNewNode(currentNode,JSONType.IDENTIFIER,"loadarray",null);
+                    }
+
                     //literal : type(dataType), specification(data), specification(NULL)
                     else if(value.equals("Literal"))
                     {
@@ -271,11 +281,9 @@ public class Parser
                     else if(value.equals("Identifier") &&
                               !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
                     {
-                        System.out.println("<<<<<<<<< "+nodeSpecification);
                         //
                         if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load")) && nodeReference == null))
                         {
-                            System.out.println("<<<<<<<<< ");
                             newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
                         }
                     }

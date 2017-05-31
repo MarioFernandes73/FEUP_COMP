@@ -13,6 +13,7 @@ package cli;
  * specific language governing permissions and limitations under the License. under the License.
  */
 
+import parser.CodeGenerator;
 import parser.Parser;
 
 public class Main {
@@ -20,7 +21,8 @@ public class Main {
     public static void main(String[] args) {
 
     	//o ficheiro sera recebido como parametro
-    	new Parser("test.json");
-    	
+    	Parser p = new Parser("test.json");
+
+    	System.out.println(new CodeGenerator(p.hir,p.tables).getCode());
     }
 }
