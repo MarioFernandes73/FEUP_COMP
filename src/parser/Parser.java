@@ -241,7 +241,6 @@ public class Parser
 				}
 				
 				
-				
 				//literal : type(dataType), specification(data), specification(NULL)
 				else if(value.equals("\"Literal\""))
 				{

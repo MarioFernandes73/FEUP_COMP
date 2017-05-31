@@ -3,7 +3,10 @@ package parser;
 import java.util.ArrayList;
 import cli.Resources;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import cli.Resources.DataType;
+=======
+>>>>>>> parent of 8cab7c5... ArrayContent
 import cli.Resources.JSONType;
 =======
 >>>>>>> parent of 7705b8f... Fixs
@@ -37,8 +40,9 @@ public class CodeGenerator {
 
 		switch (type) {
 		case START:{
-			for(Node n : node.getAdj())
+			for(Node n : node.getAdj()){
 				content += generate(n) + "\n";
+			}
 			break;
 		}
 		case FUNCTION:{
@@ -63,11 +67,6 @@ public class CodeGenerator {
 		}
 		case ARRAY:{
 			content += handleArray(node.getAdj());
-			break;
-		}
-		case ARRAYCONTENT:{
-			content += handleArrayContent(node.getAdj());
-			break;
 		}
 		default:
 			break;
@@ -118,7 +117,7 @@ public class CodeGenerator {
 <<<<<<< HEAD
 			if(firstDeclaration){ 
 				firstDeclaration = false;
-				code += getType(n) + " ";
+				code += n.getType() + " ";
 			}
 =======
 			if(firstDeclaration) firstDeclaration = false;
@@ -159,30 +158,21 @@ public class CodeGenerator {
 		return code;
 	}
 	
-	public String handleArrayContent(ArrayList<Node> subnodes){
-		String code = new String("[");
-		boolean first = true;
-		
-		for(Node n : subnodes){
-			if(first) first = false;
-			else code += ", ";
-			code +=generate(n);
-		}
-		code+="]";
-		return code;
-	}
-	
 	public String getCode(){
 		return code;
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public DataType getType(Node n){
+=======
+	public JSONType getType(Node n){
+>>>>>>> parent of 8cab7c5... ArrayContent
 		if(n.getReference() == null){
 			return getType(n.getAdj().get(0));
 		}
 		else
-			return n.getReference().type;
+			return n.getType();
 	}
 =======
 >>>>>>> parent of 7705b8f... Fixs
