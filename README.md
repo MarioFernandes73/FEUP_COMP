@@ -5,7 +5,7 @@ Geração de Código
 
 #### Functions
 
-* Sem parâmtros
+* Sem parâmetros
 * Com parâmetros de número variável
 
 ####  Declaration
@@ -14,6 +14,9 @@ Geração de Código
 * Declarações com variáveis sem ser arrays
 
 #### Assignment
+
+* Múltiplos assignments
+* Assignments de variáveis "normais"
 
 #### Expressions
 
