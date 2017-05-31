@@ -25,7 +25,8 @@ public class Resources
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
 		ARRAY,
-		ARRAYCONTENT,
+		ARRAYCONTENT,           //[0,1] array content with 2 literals
+                                //type: storearray if declaration and loadarray if x[0] for example
 		OPERATION,				//+ - * /
 		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)
 		ELSE,					//ifstatement child; all child's are consequences

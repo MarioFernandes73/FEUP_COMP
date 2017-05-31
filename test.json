@@ -1,20 +1,117 @@
 {
-    "type": "Program",
-    "body": [
+  "type": "Program",
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "test2"
+      },
+      "params": [
         {
-            "type": "FunctionDeclaration",
-            "id": {
-                "type": "Identifier",
-                "name": "hello"
-            },
-            "params": [],
-            "body": {
-                "type": "BlockStatement",
-                "body": []
-            },
-            "generator": false,
-            "expression": false
+          "type": "Identifier",
+          "name": "i"
+        },
+        {
+          "type": "Identifier",
+          "name": "j"
         }
-    ],
-    "sourceType": "script"
+      ],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 0,
+                      "raw": "0"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 3,
+                      "raw": "3"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": true,
+                "object": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "property": {
+                  "type": "Literal",
+                  "value": 0,
+                  "raw": "0"
+                }
+              },
+              "right": {
+                "type": "BinaryExpression",
+                "operator": "+",
+                "left": {
+                  "type": "BinaryExpression",
+                  "operator": "*",
+                  "left": {
+                    "type": "MemberExpression",
+                    "computed": true,
+                    "object": {
+                      "type": "Identifier",
+                      "name": "x"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "name": "j"
+                    }
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "i"
+                  }
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 2,
+                  "raw": "2"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    }
+  ],
+  "sourceType": "script"
 }
