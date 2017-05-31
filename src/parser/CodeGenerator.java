@@ -2,15 +2,8 @@ package parser;
 
 import java.util.ArrayList;
 import cli.Resources;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import cli.Resources.DataType;
-=======
->>>>>>> parent of 8cab7c5... ArrayContent
 import cli.Resources.JSONType;
-=======
->>>>>>> parent of 7705b8f... Fixs
-import jdk.management.resource.ResourceAccuracy;
 
 public class CodeGenerator {
 	private String code = null;
@@ -114,14 +107,11 @@ public class CodeGenerator {
 		String code = new String(node.getReference().type + " " + node.getReference().name); 	
 		
 		for(Node n : node.getAdj()){
-<<<<<<< HEAD
 			if(firstDeclaration){ 
 				firstDeclaration = false;
 				code += n.getType() + " ";
 			}
-=======
 			if(firstDeclaration) firstDeclaration = false;
->>>>>>> parent of 7705b8f... Fixs
 			else code += ", ";
 			code += /*n.getReference().name + */" = " + generate(n);
 		}
@@ -162,18 +152,11 @@ public class CodeGenerator {
 		return code;
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	public DataType getType(Node n){
-=======
 	public JSONType getType(Node n){
->>>>>>> parent of 8cab7c5... ArrayContent
 		if(n.getReference() == null){
 			return getType(n.getAdj().get(0));
 		}
 		else
 			return n.getType();
 	}
-=======
->>>>>>> parent of 7705b8f... Fixs
 }

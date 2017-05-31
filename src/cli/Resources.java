@@ -32,5 +32,6 @@ public class Resources
 		DOWHILESTATEMENT		//last child node : test condition; others : consequence
 	}
 
+	final public static String DEF_SPC = new String("    ");
     final public static String DEFAULT_CHAR_SET = "UTF-8";
 }
