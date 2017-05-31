@@ -223,7 +223,7 @@ public class Parser
 				}
 				
 				//BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
-				else if(value.equals("BinaryExpression"))
+				else if(value.equals("BinaryExpression") || value.equals("LogicalExpression") || value.equals("UnaryExpression"))
 				{
 					newNode = createNewNode(currentNode, JSONType.OPERATION, null, null);
 				}

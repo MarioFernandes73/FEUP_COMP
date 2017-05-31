@@ -67,6 +67,36 @@
                         "kind": "var"
                     },
                     {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "b"
+                                },
+                                "init": null
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "b"
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "value": 1,
+                                "raw": "1"
+                            }
+                        }
+                    },
+                    {
                         "type": "ExpressionStatement",
                         "expression": {
                             "type": "AssignmentExpression",
@@ -76,20 +106,49 @@
                                 "name": "c"
                             },
                             "right": {
-                                "type": "AssignmentExpression",
-                                "operator": "=",
+                                "type": "BinaryExpression",
+                                "operator": "+",
                                 "left": {
-                                    "type": "Identifier",
-                                    "name": "b"
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
                                 },
                                 "right": {
-                                    "type": "AssignmentExpression",
-                                    "operator": "=",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "a"
-                                    },
-                                    "right": {
+                                    "type": "Literal",
+                                    "value": 2,
+                                    "raw": "2"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "IfStatement",
+                        "test": {
+                            "type": "LogicalExpression",
+                            "operator": "||",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "c"
+                            },
+                            "right": {
+                                "type": "LogicalExpression",
+                                "operator": "&&",
+                                "left": {
+                                    "type": "Identifier",
+                                    "name": "a"
+                                },
+                                "right": {
+                                    "type": "Identifier",
+                                    "name": "b"
+                                }
+                            }
+                        },
+                        "consequent": {
+                            "type": "BlockStatement",
+                            "body": [
+                                {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
                                         "type": "AssignmentExpression",
                                         "operator": "=",
                                         "left": {
@@ -97,22 +156,31 @@
                                             "name": "b"
                                         },
                                         "right": {
-                                            "type": "AssignmentExpression",
-                                            "operator": "=",
-                                            "left": {
-                                                "type": "Identifier",
-                                                "name": "a"
-                                            },
-                                            "right": {
-                                                "type": "Literal",
-                                                "value": 3,
-                                                "raw": "3"
-                                            }
+                                            "type": "Literal",
+                                            "value": 2,
+                                            "raw": "2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "c"
+                                        },
+                                        "right": {
+                                            "type": "Literal",
+                                            "value": 3,
+                                            "raw": "3"
                                         }
                                     }
                                 }
-                            }
-                        }
+                            ]
+                        },
+                        "alternate": null
                     }
                 ]
             },

@@ -58,14 +58,22 @@ public class CodeGenerator {
                 content += node.getSpecification();
                 break;
             }
-            case ARRAY:{
+            case OPERATION:{
+                content += handleOperation(node,node.getAdj());
+                break;
+            }
+            case IFSTATEMENT:{
+                content += handleIf(node.getAdj());
+                break;
+            }
+            /*case ARRAY:{
                 content += handleArray(node.getAdj());
                 break;
             }
             case ARRAYCONTENT:{
                 content += handleArrayContent(node.getAdj());
                 break;
-            }
+            }*/
             //Conditions
             //Loops
             default:
@@ -100,7 +108,7 @@ public class CodeGenerator {
                     code+= ")\n" + spacement + "{";
                     spacement += Resources.DEF_SPC;				//add 1 tab
                 }
-                code+="\n" + spacement + generate(c) + ";";
+                code+="\n" + spacement + generate(c) + endPunctuation(c.getType());
             }
         }
 
@@ -110,7 +118,7 @@ public class CodeGenerator {
             spacement += Resources.DEF_SPC;
         }
 
-        spacement.replaceFirst(Resources.DEF_SPC, "");			//rem 1 tab
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");			//rem 1 tab
         code+= spacement + "\n}";
         return code;
     }
@@ -192,8 +200,48 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleOperation(Node node, ArrayList<Node> subnodes){
+        String code = new String("");
+
+        if(node.getSpecification().equals("!")){
+            code += "!(" + generate(subnodes.get(0)) + ")";
+        }
+        else{
+            code += "(" + generate(node.getAdj().get(0)); //right
+            code += " " + node.getSpecification() + " ";        //operation
+            code += generate(node.getAdj().get(1)) + ")"; //left
+        }
+
+
+        return code;
+    }
+
+    public String handleIf(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "if(" + generate(subnodes.get(0)) + ")\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 1; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
     public String getCode(){
         return code;
+    }
+
+    public String endPunctuation(JSONType type){
+        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT)))
+            return ";";
+        else
+            return "";
     }
 
     public DataType getType(Node n){
