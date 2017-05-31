@@ -1,10 +1,10 @@
 package parser;
 
-import java.util.ArrayList;
 import cli.Resources;
 import cli.Resources.DataType;
 import cli.Resources.JSONType;
-import jdk.management.resource.ResourceAccuracy;
+
+import java.util.ArrayList;
 
 public class CodeGenerator {
     private String code = null;
@@ -66,14 +66,14 @@ public class CodeGenerator {
                 content += handleIf(node.getAdj());
                 break;
             }
-            /*case ARRAY:{
+            case ARRAYLOAD:{
                 content += handleArray(node.getAdj());
                 break;
             }
-            case ARRAYCONTENT:{
+            case ARRAYDECLARATION:{
                 content += handleArrayContent(node.getAdj());
                 break;
-            }*/
+            }
             //Conditions
             //Loops
             default:
@@ -219,7 +219,7 @@ public class CodeGenerator {
     public String handleIf(ArrayList<Node> subnodes){
         String code = new String("");
         code += "\n" + spacement + "if(" + generate(subnodes.get(0)) + ")\n" +
-                spacement +  "{\n";
+                  spacement +  "{\n";
 
         spacement += Resources.DEF_SPC;
 

@@ -180,10 +180,6 @@ public class Parser
                         //create new Node
                         newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
                     }
-                    //NEW - cat
-                    else if(value.equals("VariableDeclarator")){
-                        newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
-                    }
                     else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
                     {
                         //create descriptor, add to node and to SymbolTable
@@ -191,16 +187,16 @@ public class Parser
                         currentNode.setReference(d);
                         addLocalToLastST(d);
                     }
-                    //variable declaration of an array expression
+
                     else if(value.equals("ArrayExpression") && nodeType == JSONType.VARIABLEDECLARATION )
                     {
                         currentNode.setSpecification("storearray");
-                        newNode = createNewNode(currentNode, JSONType.ARRAYCONTENT, "storearray", null);
+                        newNode = createNewNode(currentNode, JSONType.ARRAYDECLARATION, "storearray", null);
                     }
                     //fill the array content
-                    else if(value.equals("ArrayExpression") && nodeType == JSONType.ARRAYCONTENT)
+                    else if(value.equals("ArrayExpression") && nodeType == JSONType.ARRAYDECLARATION)
                     {
-                        newNode = createNewNode(currentNode, JSONType.ARRAYCONTENT, "storearray", null);
+                        newNode = createNewNode(currentNode, JSONType.ARRAYDECLARATION, "storearray", null);
                     }
 
                     //assignment : type(ASSIGNMENT), specification(=), reference(variable name and type)
@@ -216,11 +212,11 @@ public class Parser
                             currentNode.setSpecification("storearray");
                         }
                         //load of arrays
-                        newNode = createNewNode(currentNode, JSONType.ARRAYCONTENT, "loadarray", null);
+                        newNode = createNewNode(currentNode, JSONType.ARRAYLOAD, "loadarray", null);
                     }
-                    else if(value.equals("MemberExpression") && nodeType == JSONType.ARRAYCONTENT)
+                    else if(value.equals("MemberExpression") && nodeType == JSONType.ARRAYLOAD)
                     {
-                        newNode = createNewNode(currentNode, JSONType.ARRAYCONTENT, "loadarray", null);
+                        newNode = createNewNode(currentNode, JSONType.ARRAYLOAD, "loadarray", null);
                     }
 
                     //if statement : type(IFSTATEMENT), specification(null), reference(null)
@@ -241,8 +237,14 @@ public class Parser
                         newNode = createNewNode(currentNode, JSONType.DOWHILESTATEMENT, null, null);
                     }
 
+                    //for statement : type(FORSTATEMENT), specification(null), reference(null)
+                    else if(value.equals("ForStatement"))
+                    {
+                        newNode = createNewNode(currentNode, JSONType.FORSTATEMENT, null, null);
+                    }
+
                     //BinaryExpression : type(OPERATION), specification(operator), reference(NULL)
-                    else if(value.equals("BinaryExpression"))
+                    else if(value.equals("BinaryExpression") || value.equals("LogicalExpression") || value.equals("UnaryExpression") || value.equals("UpdateExpression"))
                     {
                         newNode = createNewNode(currentNode, JSONType.OPERATION, null, null);
                     }
@@ -252,17 +254,6 @@ public class Parser
                         currentNode.setSpecification(value);
                     }
 
-                    //NEW -cat
-                    else if((value.equals("ArrayExpression") && nodeType == JSONType.VARIABLEDECLARATION) ||
-                              value.equals("MemberExpression") && nodeType == JSONType.ASSIGNMENT)
-                    {
-                        currentNode.setSpecification("storearray");
-                    }
-                    else if(value.equals("MemberExpression") || value.equals("ArrayExpression"))
-                    {
-                        newNode = createNewNode(currentNode,JSONType.IDENTIFIER,"loadarray",null);
-                    }
-
                     //literal : type(dataType), specification(data), specification(NULL)
                     else if(value.equals("Literal"))
                     {
@@ -270,7 +261,7 @@ public class Parser
                     }
                     else if(key.equals("raw") && newNode != null)
                     {
-                        //TODO : falta verificar o tipo!!
+                        //ATENCAO : falta verificar o tipo!!
                         currentNode.setType(JSONType.INT);
                         currentNode.setSpecification(value);
                     }
@@ -281,8 +272,10 @@ public class Parser
                     else if(value.equals("Identifier") &&
                               !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
                     {
+
                         //
-                        if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load")) && nodeReference == null))
+                        if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load"))
+                               && nodeReference == null))
                         {
                             newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
                         }
@@ -294,6 +287,7 @@ public class Parser
                               && nodeReference == null)
                     {
                         setReference(currentNode, value);
+
                     }
 
                     break;
@@ -308,7 +302,7 @@ public class Parser
                     }
                     else
                     {
-                        analyzeBody(entry.getValue().getAsJsonObject(), currentNode);
+                        analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
                     }
 
                     break;

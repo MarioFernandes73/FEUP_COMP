@@ -38,11 +38,20 @@ function test4(y)
 	}
 }
 
-//teste atual
 function test5()
 {
 	var x;
 	do{
 		x = 6;
 	}while(x == 6);
+}
+
+//teste atual
+function test6()
+{
+    var x;
+    for(var i = 0; i < 3;i++)
+    {
+        x += i;
+    }
 }
