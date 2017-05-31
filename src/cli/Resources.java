@@ -2,8 +2,6 @@ package cli;
 
 public class Resources 
 {
-	public final static String DEF_SPC = new String("  ");	//DEFAULT_SPACE
-	
 	public enum DataType{
 		BOOLEAN, ARRAYBOOLEAN, 
 		INT, ARRAYINT, 
