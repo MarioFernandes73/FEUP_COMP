@@ -20,6 +20,18 @@
                                     "type": "Identifier",
                                     "name": "x"
                                 },
+                                "init": {
+                                    "type": "Literal",
+                                    "value": 5,
+                                    "raw": "5"
+                                }
+                            },
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "b"
+                                },
                                 "init": null
                             }
                         ],
@@ -60,6 +72,13 @@
                                 "value": 6,
                                 "raw": "6"
                             }
+                        }
+                    },
+                    {
+                        "type": "ReturnStatement",
+                        "argument": {
+                            "type": "Identifier",
+                            "name": "b"
                         }
                     }
                 ]
