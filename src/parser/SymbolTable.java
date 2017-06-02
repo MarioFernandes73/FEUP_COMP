@@ -29,7 +29,7 @@ public class SymbolTable
 
 	public Descriptor findParam(String value) {
 		for(Descriptor d : params)
-			if(d.name.equals(value))
+			if(d.getName().equals(value))
 				return d;
 		return null;
 	}
@@ -37,7 +37,7 @@ public class SymbolTable
 	public Descriptor findLocal(String value) {
 		for(Descriptor d : locals)
 		{
-			if(d.name.equals(value))
+			if(d.getName().equals(value))
 				return d;
 		}
 		return null;

@@ -16,8 +16,9 @@ import java.util.logging.Logger;
 
 public class Parser
 {
-    public ArrayList<SymbolTable> tables = new ArrayList<>();
-    public Node hir;
+    private ArrayList<SymbolTable> tables = new ArrayList<>();
+    private Node hir;
+    private JsonObject root;
 
     public Parser(String filename)
     {
@@ -25,16 +26,15 @@ public class Parser
 
         String jsonToString = read(json);
         JsonElement jelement = new JsonParser().parse(jsonToString);
-        JsonObject root = jelement.getAsJsonObject();
 
-        hir = new Node(JSONType.START);
+        root = jelement.getAsJsonObject();
+        setHir(new Node(JSONType.START));
+    }
 
-        analyzeBody(root, hir);
-
-        System.out.println("\n------- START PRINTING HIR -------");
-        printHIR(hir,"");
-        System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
-        printSymbolTable();
+    public void run()
+    {
+        analyzeBody(root, getHir());
+        typeInference(getHir());
     }
 
     /**
@@ -143,7 +143,7 @@ public class Parser
                         newNode = createNewNode(currentNode, JSONType.FUNCTION, null, null);
 
                         //create one symbol table per function
-                        tables.add(new SymbolTable());
+                        getTables().add(new SymbolTable());
                     }
                     else if(key.equals("name") && nodeType == JSONType.FUNCTION)
                     {
@@ -259,11 +259,14 @@ public class Parser
                     {
                         newNode = createNewNode(currentNode, null, null, null);
                     }
+                    else if(key.equals("value") && newNode != null)
+                    {
+                        currentNode.setSpecification(value);
+                        setType(currentNode,value);
+                    }
                     else if(key.equals("raw") && newNode != null)
                     {
-                        //ATENCAO : falta verificar o tipo!!
-                        currentNode.setType(JSONType.INT);
-                        currentNode.setSpecification(value);
+                        confirmType(currentNode,value);
                     }
 
                     //when we need to load some descriptor, and don't want to store it ==> create IDENTIFIER node
@@ -311,7 +314,6 @@ public class Parser
                     break;
             }
         }
-
         System.out.println(" --- end --- ");
     }
 
@@ -336,28 +338,91 @@ public class Parser
         return d;
     }
 
+    private void setDescriptorType(Node node, JSONType descriptorType)
+    {
+        if(descriptorType == JSONType.INT){
+            if(node.getSpecification().equals("storearray")){
+                node.setDescriptorType(Resources.DataType.ARRAYINT);
+            }else{
+                node.setDescriptorType(Resources.DataType.INT);
+            }
+        }else if(descriptorType == JSONType.STRING){
+            if(node.getSpecification().equals("storearray")){
+                node.setDescriptorType(Resources.DataType.ARRAYSTRING);
+            }else{
+                node.setDescriptorType(Resources.DataType.STRING);
+            }
+        }else if(descriptorType == JSONType.BOOLEAN){
+            if(node.getSpecification().equals("storearray")){
+                node.setDescriptorType(Resources.DataType.ARRAYBOOLEAN);
+            }else{
+                node.setDescriptorType(Resources.DataType.BOOLEAN);
+            }
+        }else if(descriptorType == JSONType.DOUBLE){
+            if(node.getSpecification().equals("storearray")){
+                node.setDescriptorType(Resources.DataType.ARRAYDOUBLE);
+            }else{
+                node.setDescriptorType(Resources.DataType.DOUBLE);
+            }
+        }
+    }
+
+    private void setType(Node currentNode, String key)
+    {
+        if(isInteger(key)){
+            currentNode.setType(JSONType.INT);
+        }
+        else if(key.equals("true") || key.equals("false")){
+            currentNode.setType(JSONType.BOOLEAN);
+        }
+        else{
+            currentNode.setType(JSONType.STRING);
+        }
+    }
+
+    private void confirmType(Node currentNode, String key)
+    {
+        if(currentNode.getType() == JSONType.INT) {
+            if (key.contains(".")) {
+                currentNode.setType(JSONType.DOUBLE);
+            }
+        }
+    }
+
+    public static boolean isInteger(String s)
+    {
+        try {
+            Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            return false;
+        } catch(NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+
     private void addNameToLastST(String name){
-        SymbolTable st = tables.get(tables.size()-1);
+        SymbolTable st = getTables().get(getTables().size()-1);
         st.addName(name);
     }
 
     private void addParamToLastST(Descriptor d){
-        SymbolTable st = tables.get(tables.size()-1);
+        SymbolTable st = getTables().get(getTables().size()-1);
         st.addParam(d);
     }
 
     private void addLocalToLastST(Descriptor d){
-        SymbolTable st = tables.get(tables.size()-1);
+        SymbolTable st = getTables().get(getTables().size()-1);
         st.addLocal(d);
     }
 
     private void addReturnToLastST(Descriptor d) {
-        SymbolTable st = tables.get(tables.size()-1);
+        SymbolTable st = getTables().get(getTables().size()-1);
         st.addReturn(d);
     }
 
     private Descriptor findDescriptorAtLastST(String value){
-        SymbolTable st = tables.get(tables.size()-1);
+        SymbolTable st = getTables().get(getTables().size()-1);
 
         Descriptor d = st.findParam(value);
 
@@ -367,41 +432,98 @@ public class Parser
         return d;
     }
 
-    private void printHIR(Node n,String spacement)
+    private void typeInference(Node node)
     {
-        System.out.println();
-        System.out.println(spacement + "Type  : " + n.getType().toString());
-        System.out.println(spacement + "Specification : "+n.getSpecification());
-
-        Descriptor d = n.getReference();
-        if(d != null)
-            System.out.println(spacement + "Descriptor ( Name : "+d.name + " | Type : "+d.type+" )");
-
-        for(Node n1 : n.getAdj())
+        //if not null reference, must interpret its childs
+        if (node.getReference() != null && node.getSpecification().contains("store"))
         {
-            printHIR(n1, spacement+"- ");
+            ArrayList<Node> nodes = node.getAdj();
+            Node firstNode = nodes.get(0);
+
+            if(node.getSpecification().equals("storearray") ){
+                nodes = firstNode.getAdj();
+                firstNode = nodes.get(0);
+            }
+
+            if(nodes.get(0).getType() == JSONType.OPERATION){
+                System.out.println("2");
+                Resources.DataType dt = typeInferenceOp(firstNode);
+                node.setDescriptorType(dt);
+            }
+            else{
+                System.out.println("1");
+                setDescriptorType(node, firstNode.getType());
+            }
+
+            return;
+        }
+
+        ArrayList<Node> nodes = node.getAdj();
+        for (Node n : nodes)
+        {
+            typeInference(n);
         }
     }
 
-    private void printSymbolTable()
+    private Resources.DataType typeInferenceOp(Node node)
     {
-        System.out.println();
+        ArrayList<Node> nodes = node.getAdj();
+        ArrayList<Resources.DataType> dataTypes = new ArrayList<>();
 
-        for(SymbolTable st : tables)
-        {
-            System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
-
-            for(Descriptor d : st.params)
-                System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-
-            System.out.println("   Locals : ");
-            for(Descriptor d : st.locals)
-                System.out.println("      Name : " + d.name + "   AND   Type : " + d.type);
-
-            if(st.functionReturn != null)
-                System.out.println("   Return : \n      Name : "+st.functionReturn.name + "   AND   Type : "+st.functionReturn.type+"\n");
+        for(Node n : nodes){
+            if(n.getSpecification().equals("load"))
+                dataTypes.add(n.getReference().getType());
             else
-                System.out.println("   Return : void\n");
+            {
+                Resources.DataType dt = typeInferenceOp(n);
+                dataTypes.add(dt);
+            }
         }
+
+        if(node.getSpecification().equals("*") || node.getSpecification().equals("+") || node.getSpecification().equals("-")){
+            return getDescriptionTypeOp(nodes);
+        }
+        else if(node.getSpecification().equals("/")){
+           return Resources.DataType.DOUBLE;
+        }
+
+        return Resources.DataType.NOTASSIGNED;
+    }
+
+    private Resources.DataType getDescriptionTypeOp(ArrayList<Node> nodes)
+    {
+        Resources.DataType dtRight = nodes.get(0).getReference().getType();
+        Resources.DataType dtLeft = nodes.get(1).getReference().getType();
+
+        if(dtLeft != dtRight){
+            if(dtLeft == Resources.DataType.DOUBLE || dtRight == Resources.DataType.DOUBLE){
+                return Resources.DataType.DOUBLE;
+            }
+            else{
+                return Resources.DataType.NOTASSIGNED;
+            }
+        }
+        else
+            return dtRight;
+    }
+
+    public ArrayList<SymbolTable> getTables()
+    {
+        return tables;
+    }
+
+    public void setTables(ArrayList<SymbolTable> tables)
+    {
+        this.tables = tables;
+    }
+
+    public Node getHir()
+    {
+        return hir;
+    }
+
+    public void setHir(Node hir)
+    {
+        this.hir = hir;
     }
 }

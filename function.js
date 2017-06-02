@@ -46,7 +46,6 @@ function test5()
 	}while(x == 6);
 }
 
-//teste atual
 function test6()
 {
     var x;
@@ -54,4 +53,23 @@ function test6()
     {
         x += i;
     }
+}
+
+//teste atual
+function test7()
+{
+    var x = 2;
+    var y = 1.0;
+    var z = true;
+    var a = "ola";
+    var b = 'a';
+}
+
+//teste atual
+function test8()
+{
+    var x = 2;
+    var y = 1.0;
+    var z;
+    z = y * x;
 }

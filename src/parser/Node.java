@@ -1,8 +1,9 @@
 package parser;
 
-import java.util.ArrayList;
-
+import cli.Resources;
 import cli.Resources.JSONType;
+
+import java.util.ArrayList;
 
 public class Node 
 {
@@ -55,4 +56,8 @@ public class Node
 	public void setAdj(ArrayList<Node> adj) {
 		this.adj = adj;
 	}
+
+    public void setDescriptorType(final Resources.DataType descriptorType) {
+        this.reference.setType(descriptorType);
+    }
 }

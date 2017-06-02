@@ -1,18 +1,20 @@
-package parser;
+package codegeneration;
 
 import cli.Resources;
 import cli.Resources.DataType;
 import cli.Resources.JSONType;
+import parser.Node;
+import parser.SymbolTable;
 
 import java.util.ArrayList;
 
 public class CodeGenerator {
-    private String code = null;
-    private String filename = null;
-    private String filepath = null;
-    private Node hir = null;
-    private ArrayList<SymbolTable> st = null;
-    private String spacement = null;
+    private String                 code      = null;
+    private String                 filename  = null;
+    private String                 filepath  = null;
+    private Node                   hir       = null;
+    private ArrayList<SymbolTable> st        = null;
+    private String                 spacement = null;
 
     public CodeGenerator(Node hir, ArrayList<SymbolTable> st){
         this.hir = hir;
@@ -30,7 +32,7 @@ public class CodeGenerator {
         //Displays
         System.out.println(node.getType() + " " + node.getSpecification());
         if(node.getReference() != null)
-            System.out.println(" " + node.getReference().name + " " + node.getReference().type + "\n");
+            System.out.println(" " + node.getReference().getName() + " " + node.getReference().getType() + "\n");
 
         switch (type) {
             case START:{
@@ -51,10 +53,10 @@ public class CodeGenerator {
                 break;
             }
             case IDENTIFIER:{
-                content += node.getReference().name;
+                content += node.getReference().getName();
                 break;
             }
-            case INT: case DOUBLE: case FLOAT: case STRING: case BOOLEAN:{
+            case INT: case DOUBLE: case STRING: case BOOLEAN:{
                 content += node.getSpecification();
                 break;
             }
@@ -95,7 +97,7 @@ public class CodeGenerator {
                     firstParam = false;
                 else
                     code += ",";
-                code+=c.getReference().name;
+                code+= c.getReference().getName();
             }
             //return
             else if(c.getType() == Resources.JSONType.RETURN){
@@ -143,7 +145,7 @@ public class CodeGenerator {
         }
         //Individual declaration
         else{
-            code += node.getReference().name;
+            code += node.getReference().getName();
 
             //If direct assignment
             for(Node n : node.getAdj()){
@@ -158,7 +160,7 @@ public class CodeGenerator {
         String code = new String("");
         int i = 0;
 
-        code += node.getReference().name;
+        code += node.getReference().getName();
 
         if(node.getSpecification().equals("storearray")){
             /*
@@ -249,6 +251,6 @@ public class CodeGenerator {
             return getType(n.getAdj().get(0));
         }
         else
-            return n.getReference().type;
+            return n.getReference().getType();
     }
 }

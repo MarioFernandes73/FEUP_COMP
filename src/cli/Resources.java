@@ -5,11 +5,8 @@ public class Resources
 	public enum DataType{
 		BOOLEAN, ARRAYBOOLEAN, 
 		INT, ARRAYINT, 
-		DOUBLE, ARRAYDOUBLE, 
-		FLOAT, ARRAYFLOAT,
-		CHAR, ARRAYCHAR,
+		DOUBLE, ARRAYDOUBLE,
 		STRING, ARRAYSTRING,
-		INTEGER, ARRAYINTEGER,
 		NOTASSIGNED
 	}
 	
@@ -18,14 +15,14 @@ public class Resources
 		FUNCTION,				//function node
 		PARAM,					//function parameter
 		RETURN,					//function return
-		INT, DOUBLE, FLOAT, STRING, BOOLEAN,	//data types for literals
+		INT, DOUBLE, STRING, BOOLEAN,	//data types for literals
 		IDENTIFIER,				//descriptor	(load or loadarray)
 		VARIABLEDECLARATION,	//var a = b 	(store)  	
 								//var a = [0,2] (storearray)
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
         ARRAYLOAD,
-        ARRAYDECLARATION,             //[0,1] array content with 2 literals
+        ARRAYDECLARATION,       //[0,1] array content with 2 literals
                                 //type: storearray if declaration and loadarray if x[0] for example
 		OPERATION,				//+ - * /
 		IFSTATEMENT,			//first child node : test condition; others : consequence (except else node)

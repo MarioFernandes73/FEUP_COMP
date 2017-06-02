@@ -13,7 +13,12 @@ package cli;
  * specific language governing permissions and limitations under the License. under the License.
  */
 
+import parser.Descriptor;
+import parser.Node;
 import parser.Parser;
+import parser.SymbolTable;
+
+import java.util.ArrayList;
 
 public class Main {
 
@@ -21,7 +26,53 @@ public class Main {
 
     	//o ficheiro sera recebido como parametro
     	Parser p = new Parser("test.json");
+    	p.run();
 
-    	//System.out.println(new CodeGenerator(p.hir,p.tables).getCode());
+    	//System.out.println(new CodeGenerator(p.getHir(),p.getTables()).getCode());
+
+
+    	//TODO colocar isto num ficheiro
+        System.out.println("\n------- START PRINTING HIR -------");
+        printHIR(p.getHir(),"");
+        System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
+        printSymbolTable(p.getTables());
+    }
+
+    private static void printHIR(Node n, String spacement)
+    {
+        System.out.println();
+        System.out.println(spacement + "Type  : " + n.getType().toString());
+        System.out.println(spacement + "Specification : "+n.getSpecification());
+
+        Descriptor d = n.getReference();
+        if(d != null)
+            System.out.println(spacement + "Descriptor ( Name : "+ d.getName() + " | Type : "+ d.getType() +" )");
+
+        for(Node n1 : n.getAdj())
+        {
+            printHIR(n1, spacement+"- ");
+        }
+    }
+
+    private static void printSymbolTable(ArrayList<SymbolTable> tables)
+    {
+        System.out.println();
+
+        for(SymbolTable st : tables)
+        {
+            System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
+
+            for(Descriptor d : st.params)
+                System.out.println("      Name : " + d.getName() + "   AND   Type : " + d.getType());
+
+            System.out.println("   Locals : ");
+            for(Descriptor d : st.locals)
+                System.out.println("      Name : " + d.getName() + "   AND   Type : " + d.getType());
+
+            if(st.functionReturn != null)
+                System.out.println("   Return : \n      Name : "+ st.functionReturn.getName() + "   AND   Type : "+ st.functionReturn.getType() +"\n");
+            else
+                System.out.println("   Return : void\n");
+        }
     }
 }
