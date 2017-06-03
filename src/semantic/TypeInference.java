@@ -90,7 +90,7 @@ public class TypeInference
         else if(node.getType() == JSONType.RETURN){
             DataType dt1 = node.getDescriptorType();
             DataType dt2 = currentTable.getFunctionReturn();
-            //diferent return type
+            //different return type
             if (dt1 != dt2) {
                 if(dt2 == DataType.NOTASSIGNED) currentTable.setFunctionReturn(dt1);
                 else throw new Exceptions.InvalidReturnTypeException(currentTable.getFunctionName());

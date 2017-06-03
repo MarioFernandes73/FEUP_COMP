@@ -38,8 +38,8 @@ public class Parser
             analyzeBody(root, getHir());
         }
         catch (Exceptions.AssignmentException e) {
-           System.err.println(e.getMessage());
-           System.exit(1);
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
         catch (Exceptions.TypeMismatchException e) {
             System.err.println(e.getMessage());
@@ -134,17 +134,21 @@ public class Parser
 
                     for(JsonElement elem : entry.getValue().getAsJsonArray())
                     {
-                        // special case where PARAMS originaly belongs to START node but we need them at FUNCTION node
+                        // special case where PARAM originaly belongs to START node but we need them at FUNCTION
                         if(key.equals("params"))
                         {
                             Node param = new Node(JSONType.PARAM);
                             analyzeBody(elem.getAsJsonObject(),param);
                             newNode.addAdj(param);
                         }
-                        else
+                        // special case where ARG originaly belongs to FUNCTION node but we need them at CALLEE
+                        else if(key.equals("arguments"))
                         {
-                            analyzeBody(elem.getAsJsonObject(),currentNode);
+                            Node arg = new Node(JSONType.ARG);
+                            analyzeBody(elem.getAsJsonObject(),arg);
+                            newNode.addAdj(arg);
                         }
+                        else analyzeBody(elem.getAsJsonObject(),currentNode);
                     }
 
                     break;
@@ -165,6 +169,16 @@ public class Parser
                         //set function name at node and at the symbolTable
                         currentNode.setSpecification(value);
                         addNameToLastST(value);
+                    }
+                    else if(value.equals("CallExpression"))
+                    {
+                        //create new Node
+                        newNode = createNewNode(currentNode, JSONType.CALLEE, null, null);
+                    }
+                    else if(key.equals("name") && nodeType == JSONType.CALLEE)
+                    {
+                        //set function name at node and at the symbolTable
+                        currentNode.setSpecification(value);
                     }
 
                     //return : type(RETURN), specification(NULL), reference(var name and type)
@@ -188,6 +202,14 @@ public class Parser
                         addParamToLastST(d);
                         currentNode.setReference(d);
                     }
+
+                    /*//argument : type(ARG), specification(NULL), reference(var name and DataType)
+                    else if(key.equals("name") && nodeType == JSONType.ARG && nodeReference == null)
+                    {
+                        //arg descriptor starts with unknown dataType
+                        Descriptor d = new Descriptor(value);
+                        currentNode.setReference(d);
+                    }*/
 
                     //local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
                     else if(value.equals("VariableDeclaration"))
@@ -270,18 +292,18 @@ public class Parser
                     }
 
                     //literal : type(dataType), specification(data), specification(NULL)
-                    else if(value.equals("Literal") && currentNode.getType() != JSONType.RETURN)
+                    else if(value.equals("Literal") && nodeType != JSONType.RETURN &&  nodeType != JSONType.ARG)
                     {
                         newNode = createNewNode(currentNode, JSONType.LITERAL, null, null);
                     }
-                    else if(key.equals("value") && (currentNode.getType() == JSONType.LITERAL || currentNode.getType() == JSONType.RETURN ))
+                    else if(key.equals("value") && (nodeType == JSONType.LITERAL || nodeType == JSONType.RETURN || nodeType == JSONType.ARG))
                     {
                         Descriptor d = new Descriptor(null, Resources.DataType.NOTASSIGNED);
                         currentNode.setReference(d);
                         currentNode.setSpecification(value);
                         setType(currentNode,value);
                     }
-                    else if(key.equals("raw") && (currentNode.getType() == JSONType.LITERAL || currentNode.getType() == JSONType.RETURN ))
+                    else if(key.equals("raw") && (nodeType == JSONType.LITERAL || nodeType == JSONType.RETURN || nodeType == JSONType.ARG))
                     {
                         confirmType(currentNode,value);
                     }
@@ -290,9 +312,9 @@ public class Parser
                     //special cases that have identifiers but we'll use them on a different way : FUNCTION, PARAM and RETURN
                     //identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
                     else if(value.equals("Identifier") &&
-                              !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION))
+                              !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION ||
+                                  nodeType == JSONType.CALLEE || nodeType == JSONType.ARG))
                     {
-
                         //
                         if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load"))
                                && nodeReference == null))
@@ -301,9 +323,9 @@ public class Parser
                         }
                     }
 
-                    //adding a descriptor to some load/store node
+                    //adding a descriptor to some load/store or arg node
                     else if(key.equals("name") &&
-                              (nodeSpecification.equals("store") || nodeSpecification.equals("load"))
+                              (nodeType == JSONType.ARG || nodeSpecification.equals("store") || nodeSpecification.equals("load"))
                               && nodeReference == null)
                     {
                         setReference(currentNode, value);

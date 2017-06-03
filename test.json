@@ -7,7 +7,16 @@
         "type": "Identifier",
         "name": "test"
       },
-      "params": [],
+      "params": [
+        {
+          "type": "Identifier",
+          "name": "i"
+        },
+        {
+          "type": "Identifier",
+          "name": "j"
+        }
+      ],
       "body": {
         "type": "BlockStatement",
         "body": [
@@ -58,31 +67,32 @@
                 "type": "VariableDeclarator",
                 "id": {
                   "type": "Identifier",
-                  "name": "b"
+                  "name": "a"
                 },
-                "init": {
-                  "type": "Literal",
-                  "value": 5.5,
-                  "raw": "5.5"
-                }
+                "init": null
               }
             ],
             "kind": "var"
           },
           {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Literal",
-              "value": true,
-              "raw": "true"
-            }
-          },
-          {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Literal",
-              "value": 5,
-              "raw": "5"
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "test"
+              },
+              "arguments": [
+                {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              ]
             }
           }
         ]

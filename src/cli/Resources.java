@@ -13,6 +13,8 @@ public class Resources
 	public enum JSONType{
 		START,					//first node
 		FUNCTION,				//function node
+        CALLEE,                 //function callee
+        ARG,                    //function caller arguments
 		PARAM,					//function parameter
 		RETURN,					//function return
 		//INT, DOUBLE, STRING, BOOLEAN,	//data types for literals

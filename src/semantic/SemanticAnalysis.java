@@ -21,7 +21,6 @@ public class SemanticAnalysis
 
     /**
      *
-     * TODO arrays
      *
      * Calls to functions have the correct number of arguments,
      * the correct types of the arguments,
