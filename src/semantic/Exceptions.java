@@ -52,4 +52,27 @@ public class Exceptions {
         }
     }
 
+    public static class InvalidReturnTypeException extends Exception
+    {
+        private String name;
+        public InvalidReturnTypeException(String function){
+            super("Invalid Operation");
+            this.name = function;
+        }
+        public String getMessage(){
+            return "Invalid type of return for "+name;
+        }
+    }
+
+    public static class FunctionNameException extends Exception
+    {
+        private String name;
+        public FunctionNameException(String name){
+            super("Invalid Function Name");
+            this.name = name;
+        }
+        public String getMessage(){
+            return "Repeated function name "+name;
+        }
+    }
 }

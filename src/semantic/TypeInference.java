@@ -11,10 +11,12 @@ public class TypeInference
 {
     private ArrayList<SymbolTable> tables = new ArrayList<>();
     private Node hir;
+    private SymbolTable currentTable;
 
     public TypeInference(ArrayList<SymbolTable> tables, Node hir){
         this.tables = tables;
         this.hir = hir;
+        this.currentTable = tables.get(0);
     }
 
     public void run(){
@@ -35,15 +37,23 @@ public class TypeInference
         catch (Exceptions.InvalidOperationException e)
         {
             System.err.println(e.getMessage());
-            e.printStackTrace();
+            System.exit(1);
+        }
+        catch (Exceptions.InvalidReturnTypeException e)
+        {
+            System.err.println(e.getMessage());
             System.exit(1);
         }
     }
 
-    private void typeInference(Node node) throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException
+    private void typeInference(Node node)
+      throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException, Exceptions.InvalidReturnTypeException
     {
+        if(node.getType() == JSONType.FUNCTION){
+            changeCurrentTable(node.getSpecification());
+        }
         //if not null reference, must interpret its childs
-        if (node.getReference() != null && node.getSpecification().contains("store"))
+        else if (node.getSpecification() != null && node.getSpecification().contains("store"))
         {
             //childs
             ArrayList<Node> nodes = node.getAdj();
@@ -76,10 +86,28 @@ public class TypeInference
             }
             return;
         }
+        //return type
+        else if(node.getType() == JSONType.RETURN){
+            DataType dt1 = node.getDescriptorType();
+            DataType dt2 = currentTable.getFunctionReturn();
+            //diferent return type
+            if (dt1 != dt2) {
+                if(dt2 == DataType.NOTASSIGNED) currentTable.setFunctionReturn(dt1);
+                else throw new Exceptions.InvalidReturnTypeException(currentTable.getFunctionName());
+            }
+        }
 
         ArrayList<Node> nodes = node.getAdj();
         for (Node n : nodes) {
             typeInference(n);
+        }
+    }
+
+    private void changeCurrentTable(final String specification)
+    {
+        for (SymbolTable st : tables){
+            if(st.getFunctionName().equals(specification))
+                currentTable = st;
         }
     }
 

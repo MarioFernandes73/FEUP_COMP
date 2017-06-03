@@ -65,7 +65,7 @@ public class Main {
 
         for(SymbolTable st : tables)
         {
-            System.out.println("Function \n   Name : " + st.functionName + "\n   Params : ");
+            System.out.println("Function \n   Name : " + st.getFunctionName() + "\n   Params : ");
 
             for(Descriptor d : st.params)
                 System.out.println("      Name : " + d.getName() + "   AND   Type : " + d.getType());
@@ -74,8 +74,8 @@ public class Main {
             for(Descriptor d : st.locals)
                 System.out.println("      Name : " + d.getName() + "   AND   Type : " + d.getType());
 
-            if(st.functionReturn != null)
-                System.out.println("   Return : \n      Name : "+ st.functionReturn.getName() + "   AND   Type : "+ st.functionReturn.getType() +"\n");
+            if(st.getFunctionReturn() != null)
+                System.out.println("   Return Type : "+ st.getFunctionReturn().name());
             else
                 System.out.println("   Return : void\n");
         }

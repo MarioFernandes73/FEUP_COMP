@@ -34,17 +34,18 @@ public class Parser
 
     public void run()
     {
-        try
-        {
+        try {
             analyzeBody(root, getHir());
         }
-        catch (Exceptions.AssignmentException e)
-        {
+        catch (Exceptions.AssignmentException e) {
            System.err.println(e.getMessage());
            System.exit(1);
         }
-        catch (Exceptions.TypeMismatchException e)
-        {
+        catch (Exceptions.TypeMismatchException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        catch (Exceptions.FunctionNameException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -97,7 +98,8 @@ public class Parser
         return stringBuilder.toString();
     }
 
-    private void analyzeBody(JsonObject jobject, Node node) throws Exceptions.AssignmentException, Exceptions.TypeMismatchException
+    private void analyzeBody(JsonObject jobject, Node node)
+      throws Exceptions.AssignmentException, Exceptions.TypeMismatchException, Exceptions.FunctionNameException
     {
         System.out.println(" --- begin --- \n\nCurrent Node : "+node.getType());
 
@@ -174,7 +176,7 @@ public class Parser
                     else if(key.equals("name") && nodeType == JSONType.RETURN && nodeReference == null)
                     {
                         Descriptor d = setReference(currentNode,value);
-                        addReturnToLastST(d);
+                        addReturnToLastST(d.getType());
                     }
 
                     //parameter : type(PARAM), specification(NULL), reference(var name and DataType)
@@ -268,17 +270,18 @@ public class Parser
                     }
 
                     //literal : type(dataType), specification(data), specification(NULL)
-                    else if(value.equals("Literal"))
+                    else if(value.equals("Literal") && currentNode.getType() != JSONType.RETURN)
+                    {
+                        newNode = createNewNode(currentNode, JSONType.LITERAL, null, null);
+                    }
+                    else if(key.equals("value") && (currentNode.getType() == JSONType.LITERAL || currentNode.getType() == JSONType.RETURN ))
                     {
                         Descriptor d = new Descriptor(null, Resources.DataType.NOTASSIGNED);
-                        newNode = createNewNode(currentNode, JSONType.LITERAL, null, d);
-                    }
-                    else if(key.equals("value") && currentNode.getType() == JSONType.LITERAL)
-                    {
+                        currentNode.setReference(d);
                         currentNode.setSpecification(value);
                         setType(currentNode,value);
                     }
-                    else if(key.equals("raw") && currentNode.getType() == JSONType.LITERAL)
+                    else if(key.equals("raw") && (currentNode.getType() == JSONType.LITERAL || currentNode.getType() == JSONType.RETURN ))
                     {
                         confirmType(currentNode,value);
                     }
@@ -389,9 +392,16 @@ public class Parser
         return true;
     }
 
-    private void addNameToLastST(String name){
-        SymbolTable st = getTables().get(getTables().size()-1);
-        st.addName(name);
+    private void addNameToLastST(String name) throws Exceptions.FunctionNameException
+    {
+        for(int i = 0; i < tables.size(); i++){
+            if(i == tables.size()-1){
+                tables.get(i).addName(name);
+            }
+            else if(tables.get(i).getFunctionName().equals(name)){
+                throw new Exceptions.FunctionNameException(name);
+            }
+        }
     }
 
     private void addParamToLastST(Descriptor d){
@@ -404,9 +414,9 @@ public class Parser
         st.addLocal(d);
     }
 
-    private void addReturnToLastST(Descriptor d) {
+    private void addReturnToLastST(Resources.DataType dataType) {
         SymbolTable st = getTables().get(getTables().size()-1);
-        st.addReturn(d);
+        st.addReturn(dataType);
     }
 
     private Descriptor findDescriptorAtLastST(String value) throws Exceptions.AssignmentException

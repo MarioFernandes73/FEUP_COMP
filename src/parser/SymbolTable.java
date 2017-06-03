@@ -1,15 +1,21 @@
 package parser;
 
+import cli.Resources.DataType;
+
 import java.util.ArrayList;
 
 public class SymbolTable 
 {
-	public String functionName;
+    private String functionName;
 	public ArrayList<Descriptor> params = new ArrayList<>();
 	public ArrayList<Descriptor> locals = new ArrayList<>();
-	public Descriptor functionReturn;
+    private DataType functionReturn;
 	
-	public SymbolTable(){}
+	public SymbolTable(){
+	    //default settings
+        functionName = "main";
+        functionReturn = DataType.NOTASSIGNED;
+    }
 	
 	public void addName(String name){
 		this.functionName = name;
@@ -23,7 +29,7 @@ public class SymbolTable
 		locals.add(d);
 	}
 	
-	public void addReturn(Descriptor d){
+	public void addReturn(DataType d){
 		this.functionReturn = d;
 	}
 
@@ -35,11 +41,28 @@ public class SymbolTable
 	}
 
 	public Descriptor findLocal(String value) {
-		for(Descriptor d : locals)
-		{
+		for(Descriptor d : locals) {
 			if(d.getName().equals(value))
 				return d;
 		}
 		return null;
 	}
+
+    public DataType getFunctionReturn() {
+        return functionReturn;
+    }
+
+    public void setFunctionReturn(DataType functionReturn) {
+        this.functionReturn = functionReturn;
+    }
+
+    public String getFunctionName()
+    {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName)
+    {
+        this.functionName = functionName;
+    }
 }
