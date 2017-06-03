@@ -35,6 +35,7 @@ public class TypeInference
         catch (Exceptions.InvalidOperationException e)
         {
             System.err.println(e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }
@@ -60,9 +61,14 @@ public class TypeInference
                 node.setDescriptorType(dt);
             }
             //if arrays
-            else if(node.getSpecification().equals("storearray") || firstNode.getSpecification().equals("loadarray")){
+            else if(firstNode.getSpecification().equals("loadarray")){
                 DataType dt = typeInferenceArray(firstNode);
+                System.out.println("-1 - "+dt);
                 node.setDescriptorType(dt);
+            }
+            else if(node.getSpecification().equals("storearray")){
+                DataType dt = typeInferenceArray(firstNode);
+                node.setDescriptorType(getDescriptionTypeArrays(dt));
             }
             //identifiers and literals
             else {
@@ -115,7 +121,13 @@ public class TypeInference
             }
             return dt1;
         }
-        return getDescriptionTypeArrays(firstNode.getDescriptorType());
+        else if(node.getType() == JSONType.ARRAYLOAD) {
+            if(firstNode.getType() == JSONType.ARRAYLOAD) {
+                return typeInferenceArray(firstNode);
+            }
+            return getDescriptionTypeArrays(firstNode.getDescriptorType());
+        }
+        return DataType.NOTASSIGNED;
     }
 
     private DataType typeInferenceOp(Node node) throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException
@@ -134,6 +146,7 @@ public class TypeInference
             else if(n.getType() == cli.Resources.JSONType.ARRAYLOAD)
             {
                 DataType dt = typeInferenceArray(n);
+                System.out.println("2 - "+dt);
                 dataTypes.add(dt);
             }
         }
