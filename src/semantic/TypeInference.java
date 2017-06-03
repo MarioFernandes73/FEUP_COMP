@@ -2,6 +2,7 @@ package semantic;
 
 import cli.Resources.DataType;
 import cli.Resources.JSONType;
+import parser.Descriptor;
 import parser.Node;
 import parser.SymbolTable;
 
@@ -22,37 +23,61 @@ public class TypeInference
     public void run(){
         try
         {
-            typeInference(hir);
+            SemanticTypeInference(hir);
+            verifyCalleeArgsRetType(hir);
         }
-        catch (Exceptions.TypeMismatchException e)
-        {
+        catch (Exceptions.TypeMismatchException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        catch (Exceptions.InitializationException e)
-        {
+        catch (Exceptions.InitializationException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        catch (Exceptions.InvalidOperationException e)
-        {
+        catch (Exceptions.InvalidOperationException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        catch (Exceptions.InvalidReturnTypeException e)
-        {
+        catch (Exceptions.InvalidReturnTypeException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        catch (Exceptions.FunctionNameException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        catch (Exceptions.InvalidNumArgsException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
     }
 
-    private void typeInference(Node node)
-      throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException, Exceptions.InvalidReturnTypeException
+    private void SemanticTypeInference(Node node)
+      throws
+      Exceptions.TypeMismatchException,
+        Exceptions.InvalidOperationException,
+        Exceptions.InitializationException,
+        Exceptions.InvalidReturnTypeException,
+        Exceptions.FunctionNameException, Exceptions.InvalidNumArgsException
     {
         if(node.getType() == JSONType.FUNCTION){
             changeCurrentTable(node.getSpecification());
         }
-        //if not null reference, must interpret its childs
+        //callers
+        else if(node.getType() == JSONType.CALLEE) {
+            SymbolTable st = getSymbolTable(node.getSpecification());
+
+            //callee does not exist
+            if(st == null){
+                throw new Exceptions.FunctionNameException(node.getSpecification());
+            }
+
+            //args
+            ArrayList<Node> nodes = node.getAdj();
+            if(nodes.size() != st.getNumArgs())
+                throw new Exceptions.InvalidNumArgsException(node.getSpecification());
+        }
+        //if not null reference, must interpret its childs --> type inference
         else if (node.getSpecification() != null && node.getSpecification().contains("store"))
         {
             //childs
@@ -80,6 +105,13 @@ public class TypeInference
                 DataType dt = typeInferenceArray(firstNode);
                 node.setDescriptorType(getDescriptionTypeArrays(dt));
             }
+            //callees
+            else if(firstNode.getType() == JSONType.CALLEE){
+                SymbolTable st = getSymbolTable(firstNode.getSpecification());
+
+                DataType dt = st.getFunctionReturn();
+                node.setDescriptorType(dt);
+            }
             //identifiers and literals
             else {
                 node.setDescriptorType(firstNode.getDescriptorType());
@@ -97,18 +129,61 @@ public class TypeInference
             }
         }
 
+        //recursive call
         ArrayList<Node> nodes = node.getAdj();
         for (Node n : nodes) {
-            typeInference(n);
+            SemanticTypeInference(n);
         }
     }
 
-    private void changeCurrentTable(final String specification)
+    /**
+     * Verifies if arguments and return types of calees functions are correct.
+     * Executed after type inference.
+     * @param node
+     */
+    private void verifyCalleeArgsRetType(final Node node) throws Exceptions.TypeMismatchException
     {
+        if(node.getType() == JSONType.CALLEE)
+        {
+            SymbolTable st = getSymbolTable(node.getSpecification());
+            //childs
+            ArrayList<Node> nodes = node.getAdj();
+            ArrayList<Descriptor> args = st.getParams();
+
+            //two cases :
+            //    args are NOTASSIGNED -> assign now
+            //    types assigned and different -> error
+            for (int i = 0; i < nodes.size(); i++)
+            {
+                if(nodes.get(i).getDescriptorType() != args.get(i).getType())
+                {
+                    if(args.get(i).getType() == DataType.NOTASSIGNED){
+                        args.get(i).setType(nodes.get(i).getDescriptorType());
+                    }else{
+                        throw new Exceptions.TypeMismatchException(args.get(i).getName());
+                    }
+                }
+            }
+        }
+
+        ArrayList<Node> nodes = node.getAdj();
+        for (Node n : nodes) {
+            verifyCalleeArgsRetType(n);
+        }
+    }
+
+    private void changeCurrentTable(final String specification) {
         for (SymbolTable st : tables){
             if(st.getFunctionName().equals(specification))
                 currentTable = st;
         }
+    }
+
+    private SymbolTable getSymbolTable(final String specification) {
+        for (SymbolTable st : tables)
+            if(st.getFunctionName().equals(specification))
+                return st;
+        return null;
     }
 
     private DataType typeInferenceArray(Node node) throws Exceptions.TypeMismatchException

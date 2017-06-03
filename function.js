@@ -73,3 +73,12 @@ function test8()
     var z;
     z = y * x;
 }
+//===================
+function first(){
+    var a = "ola";
+    second(a,5);
+}
+
+function second(a,b){
+
+}

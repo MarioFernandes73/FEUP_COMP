@@ -17,7 +17,6 @@ public class Resources
         ARG,                    //function caller arguments
 		PARAM,					//function parameter
 		RETURN,					//function return
-		//INT, DOUBLE, STRING, BOOLEAN,	//data types for literals
         LITERAL,
 		IDENTIFIER,				//descriptor	(load or loadarray)
 		VARIABLEDECLARATION,	//var a = b 	(store)  	

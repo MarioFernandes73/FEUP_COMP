@@ -72,7 +72,19 @@ public class Exceptions {
             this.name = name;
         }
         public String getMessage(){
-            return "Repeated function name "+name;
+            return "Invalid function name "+name;
+        }
+    }
+
+    public static class InvalidNumArgsException extends Exception
+    {
+        private String name;
+        public InvalidNumArgsException(String name){
+            super("Invalid Function Name");
+            this.name = name;
+        }
+        public String getMessage(){
+            return "Invalid number of arguments for function "+name;
         }
     }
 }

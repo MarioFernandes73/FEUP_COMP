@@ -65,4 +65,12 @@ public class SymbolTable
     {
         this.functionName = functionName;
     }
+
+    public int getNumArgs() {
+        return params.size();
+    }
+
+    public ArrayList<Descriptor> getParams() {
+        return params;
+    }
 }

@@ -5,56 +5,7 @@
       "type": "FunctionDeclaration",
       "id": {
         "type": "Identifier",
-        "name": "test"
-      },
-      "params": [
-        {
-          "type": "Identifier",
-          "name": "i"
-        },
-        {
-          "type": "Identifier",
-          "name": "j"
-        }
-      ],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-                  "type": "Literal",
-                  "value": 5,
-                  "raw": "5"
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Identifier",
-              "name": "a"
-            }
-          }
-        ]
-      },
-      "generator": false,
-      "expression": false
-    },
-    {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "test1"
+        "name": "first"
       },
       "params": [],
       "body": {
@@ -69,7 +20,11 @@
                   "type": "Identifier",
                   "name": "a"
                 },
-                "init": null
+                "init": {
+                  "type": "Literal",
+                  "value": "ola",
+                  "raw": "\"ola\""
+                }
               }
             ],
             "kind": "var"
@@ -80,7 +35,7 @@
               "type": "CallExpression",
               "callee": {
                 "type": "Identifier",
-                "name": "test"
+                "name": "second"
               },
               "arguments": [
                 {
@@ -94,6 +49,74 @@
                 }
               ]
             }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    },
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "third"
+      },
+      "params": [],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "Literal",
+              "value": 5,
+              "raw": "5"
+            }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    },
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "second"
+      },
+      "params": [
+        {
+          "type": "Identifier",
+          "name": "a"
+        },
+        {
+          "type": "Identifier",
+          "name": "b"
+        }
+      ],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "c"
+                },
+                "init": {
+                  "type": "CallExpression",
+                  "callee": {
+                    "type": "Identifier",
+                    "name": "third"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "kind": "var"
           }
         ]
       },
