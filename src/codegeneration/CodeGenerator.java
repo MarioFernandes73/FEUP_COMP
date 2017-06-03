@@ -20,7 +20,9 @@ public class CodeGenerator {
         this.hir = hir;
         this.st = st;
         this.spacement = new String("");
+    }
 
+    public void run(){
         code = generate(hir);
     }
 

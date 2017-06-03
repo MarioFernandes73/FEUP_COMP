@@ -29,13 +29,11 @@ public class Descriptor
         this.name = name;
     }
 
-    public DataType getType()
-    {
+    public DataType getType() {
         return type;
     }
 
-    public void setType(DataType type)
-    {
+    public void setType(DataType type) {
         this.type = type;
     }
 }

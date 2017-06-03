@@ -60,8 +60,9 @@ public class Node
 
     public void setDescriptorType(final Resources.DataType descriptorType) throws Exceptions.TypeMismatchException
     {
-        if(this.reference.getType() == Resources.DataType.NOTASSIGNED || this.reference.getType() == descriptorType)
+        if (this.reference.getType() == Resources.DataType.NOTASSIGNED || this.reference.getType() == descriptorType) {
             this.reference.setType(descriptorType);
+        }
         else
             throw new Exceptions.TypeMismatchException(this.reference.getName());
     }

@@ -17,6 +17,7 @@ import parser.Descriptor;
 import parser.Node;
 import parser.Parser;
 import parser.SymbolTable;
+import semantic.TypeInference;
 
 import java.util.ArrayList;
 
@@ -28,8 +29,12 @@ public class Main {
     	Parser p = new Parser("test.json");
     	p.run();
 
-    	//System.out.println(new CodeGenerator(p.getHir(),p.getTables()).getCode());
+        TypeInference ti = new TypeInference(p.getTables(),p.getHir());
+        ti.run();
 
+        /*CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
+        cg.run();
+        System.out.println(cg.getCode());*/
 
     	//TODO colocar isto num ficheiro
         System.out.println("\n------- START PRINTING HIR -------");

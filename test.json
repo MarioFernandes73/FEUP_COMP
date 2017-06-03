@@ -18,21 +18,79 @@
                 "type": "VariableDeclarator",
                 "id": {
                   "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 0,
+                      "raw": "0"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
                   "name": "b"
                 },
                 "init": {
                   "type": "BinaryExpression",
-                  "operator": "/",
+                  "operator": "*",
                   "left": {
-                    "type": "Literal",
-                    "value": 5,
-                    "raw": "5"
+                    "type": "MemberExpression",
+                    "computed": true,
+                    "object": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "property": {
+                      "type": "Literal",
+                      "value": 0,
+                      "raw": "0"
+                    }
                   },
                   "right": {
                     "type": "Literal",
-                    "value": 2,
-                    "raw": "2"
+                    "value": 5.2,
+                    "raw": "5.2"
                   }
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "c"
+                },
+                "init": {
+                  "type": "Identifier",
+                  "name": "a"
                 }
               }
             ],
