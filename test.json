@@ -24,73 +24,36 @@
                   "type": "ArrayExpression",
                   "elements": [
                     {
-                      "type": "Literal",
-                      "value": 0,
-                      "raw": "0"
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": 0,
+                          "raw": "0"
+                        },
+                        {
+                          "type": "Literal",
+                          "value": 1,
+                          "raw": "1"
+                        }
+                      ]
                     },
                     {
-                      "type": "Literal",
-                      "value": 1,
-                      "raw": "1"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 2,
-                      "raw": "2"
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": 0.3,
+                          "raw": "0.3"
+                        },
+                        {
+                          "type": "Literal",
+                          "value": 5.2,
+                          "raw": "5.2"
+                        }
+                      ]
                     }
                   ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "b"
-                },
-                "init": {
-                  "type": "BinaryExpression",
-                  "operator": "*",
-                  "left": {
-                    "type": "MemberExpression",
-                    "computed": true,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "a"
-                    },
-                    "property": {
-                      "type": "Literal",
-                      "value": 0,
-                      "raw": "0"
-                    }
-                  },
-                  "right": {
-                    "type": "Literal",
-                    "value": 5.2,
-                    "raw": "5.2"
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "c"
-                },
-                "init": {
-                  "type": "Identifier",
-                  "name": "a"
                 }
               }
             ],

@@ -1,6 +1,7 @@
 package semantic;
 
-import cli.Resources;
+import cli.Resources.DataType;
+import cli.Resources.JSONType;
 import parser.Node;
 import parser.SymbolTable;
 
@@ -54,13 +55,13 @@ public class TypeInference
             Node firstNode = nodes.get(0);
 
             //my child is an operation
-            if(nodes.get(0).getType() == Resources.JSONType.OPERATION) {
-                Resources.DataType dt = typeInferenceOp(firstNode);
+            if(nodes.get(0).getType() == JSONType.OPERATION) {
+                DataType dt = typeInferenceOp(firstNode);
                 node.setDescriptorType(dt);
             }
             //if arrays
             else if(node.getSpecification().equals("storearray") || firstNode.getSpecification().equals("loadarray")){
-                Resources.DataType dt = typeInferenceArray(firstNode);
+                DataType dt = typeInferenceArray(firstNode);
                 node.setDescriptorType(dt);
             }
             //identifiers and literals
@@ -76,32 +77,55 @@ public class TypeInference
         }
     }
 
-    private Resources.DataType typeInferenceArray(Node node) throws Exceptions.TypeMismatchException
+    private DataType typeInferenceArray(Node node) throws Exceptions.TypeMismatchException
     {
         ArrayList<Node> nodes = node.getAdj();
         Node firstNode = nodes.get(0);
 
         //special case for stores --> all childs must have the same type
-        if(node.getSpecification().equals("storearray"))
+        if(node.getType() == JSONType.ARRAYDECLARATION)
         {
-            Resources.DataType dt = firstNode.getDescriptorType();
-            for (Node n : nodes){
-                if(n.getDescriptorType() != dt)
-                    throw new Exceptions.TypeMismatchException("resolver");
+            DataType dt1 = DataType.NOTASSIGNED;
+
+            if(firstNode.getReference() != null)
+                dt1 = firstNode.getDescriptorType();
+
+            //multi-dimensional array
+            for(Node n_dim : nodes)
+            {
+                if(n_dim.getType() == JSONType.ARRAYDECLARATION)
+                {
+                    DataType dt2 = typeInferenceArray(n_dim);
+                    if(dt1 == DataType.NOTASSIGNED){
+                        dt1 = dt2;
+                    }
+                    else if(dt1 != dt2){
+                        if((dt1 == DataType.INT && dt2 == DataType.DOUBLE) || (dt2 == DataType.INT && dt1 == DataType.DOUBLE)) {
+                            dt1 = DataType.DOUBLE;
+                        }
+                        else{
+                            throw new Exceptions.TypeMismatchException("resolver 2");
+                        }
+                    }
+                }
+                else{
+                    if(n_dim.getDescriptorType() != dt1)
+                        throw new Exceptions.TypeMismatchException("resolver 1");
+                }
             }
+            return dt1;
         }
-        System.out.println("first -- "+firstNode.getDescriptorType());
         return getDescriptionTypeArrays(firstNode.getDescriptorType());
     }
 
-    private Resources.DataType typeInferenceOp(Node node) throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException
+    private DataType typeInferenceOp(Node node) throws Exceptions.TypeMismatchException, Exceptions.InvalidOperationException, Exceptions.InitializationException
     {
         ArrayList<Node> nodes = node.getAdj();
-        ArrayList<Resources.DataType> dataTypes = new ArrayList<>();
+        ArrayList<DataType> dataTypes = new ArrayList<>();
 
         for(Node n : nodes){
             if(n.getType() == cli.Resources.JSONType.OPERATION){
-                Resources.DataType dt = typeInferenceOp(n);
+                DataType dt = typeInferenceOp(n);
                 dataTypes.add(dt);
             }
             else if(n.getType() == cli.Resources.JSONType.IDENTIFIER || n.getType() == cli.Resources.JSONType.LITERAL){
@@ -109,7 +133,7 @@ public class TypeInference
             }
             else if(n.getType() == cli.Resources.JSONType.ARRAYLOAD)
             {
-                Resources.DataType dt = typeInferenceArray(n);
+                DataType dt = typeInferenceArray(n);
                 dataTypes.add(dt);
             }
         }
@@ -117,76 +141,75 @@ public class TypeInference
         return getDescriptionTypeOp(dataTypes,node.getSpecification());
     }
 
-    private Resources.DataType getDescriptionTypeArrays(Resources.DataType descriptorType)
+    private DataType getDescriptionTypeArrays(DataType descriptorType)
     {
-        if(descriptorType == Resources.DataType.INT){
-            return Resources.DataType.ARRAYINT;
-        }else if(descriptorType == Resources.DataType.STRING){
-            return Resources.DataType.ARRAYSTRING;
-        }else if(descriptorType == Resources.DataType.BOOLEAN){
-            return (Resources.DataType.ARRAYBOOLEAN);
-        }else if(descriptorType == Resources.DataType.DOUBLE){
-            return (Resources.DataType.ARRAYDOUBLE);
-        }else if(descriptorType == Resources.DataType.ARRAYINT){
-            return (Resources.DataType.INT);
-        }else if(descriptorType == Resources.DataType.ARRAYSTRING){
-            return (Resources.DataType.STRING);
-        }else if(descriptorType == Resources.DataType.ARRAYBOOLEAN){
-            return (Resources.DataType.BOOLEAN);
-        }else if(descriptorType == Resources.DataType.ARRAYDOUBLE){
-            return (Resources.DataType.DOUBLE);
+        if(descriptorType == DataType.INT){
+            return DataType.ARRAYINT;
+        }else if(descriptorType == DataType.STRING){
+            return DataType.ARRAYSTRING;
+        }else if(descriptorType == DataType.BOOLEAN){
+            return (DataType.ARRAYBOOLEAN);
+        }else if(descriptorType == DataType.DOUBLE){
+            return (DataType.ARRAYDOUBLE);
+        }else if(descriptorType == DataType.ARRAYINT){
+            return (DataType.INT);
+        }else if(descriptorType == DataType.ARRAYSTRING){
+            return (DataType.STRING);
+        }else if(descriptorType == DataType.ARRAYBOOLEAN){
+            return (DataType.BOOLEAN);
+        }else if(descriptorType == DataType.ARRAYDOUBLE){
+            return (DataType.DOUBLE);
         }
 
-        return Resources.DataType.NOTASSIGNED;
+        return DataType.NOTASSIGNED;
     }
 
-    private Resources.DataType getDescriptionTypeOp(ArrayList<Resources.DataType> dataTypes, String op) throws Exceptions.InitializationException, Exceptions.InvalidOperationException
+    private DataType getDescriptionTypeOp(ArrayList<DataType> dataTypes, String op) throws Exceptions.InitializationException, Exceptions.InvalidOperationException
     {
-        Resources.DataType dtLeft = dataTypes.get(0);
+        DataType dtLeft = dataTypes.get(0);
 
         //if some variables are NOT ASSIGNED -> problems with initialization
-        if(dtLeft == Resources.DataType.NOTASSIGNED){
+        if(dtLeft == DataType.NOTASSIGNED){
             throw new Exceptions.InitializationException("resolver");
         }
         //- / * only allowed for numbers
-        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtLeft == Resources.DataType.INT || dtLeft == Resources.DataType.DOUBLE)) {
+        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtLeft == DataType.INT || dtLeft == DataType.DOUBLE)) {
             throw new Exceptions.InvalidOperationException();
         }
         // + not allowed for booleans
-        if(op.equals("+") && (dtLeft == Resources.DataType.BOOLEAN )) {
+        if(op.equals("+") && (dtLeft == DataType.BOOLEAN )) {
             throw new Exceptions.InvalidOperationException();
         }
 
-        Resources.DataType dtRight = dataTypes.get(1);
+        DataType dtRight = dataTypes.get(1);
 
         //if some variables are NOT ASSIGNED -> problems with initialization
-        if(dtRight == Resources.DataType.NOTASSIGNED){
+        if(dtRight == DataType.NOTASSIGNED){
             throw new Exceptions.InitializationException("resolver");
         }
         // - / * only allowed for numbers
-        System.out.println("zzz"+dtRight.name());
-        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtRight == Resources.DataType.INT || dtRight == Resources.DataType.DOUBLE)) {
+        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtRight == DataType.INT || dtRight == DataType.DOUBLE)) {
             throw new Exceptions.InvalidOperationException();
         }
         // + not allowed for booleans
-        if(op.equals("+") && dtRight == Resources.DataType.BOOLEAN) {
+        if(op.equals("+") && dtRight == DataType.BOOLEAN) {
             throw new Exceptions.InvalidOperationException();
         }
 
         // division --> always double
         if(op.equals("/"))
-            return Resources.DataType.DOUBLE;
+            return DataType.DOUBLE;
 
         //if different -> must apply type inference
         if((dtLeft != dtRight))
         {
             //string + (int|double)
-            if(dtLeft == Resources.DataType.STRING || dtRight == Resources.DataType.STRING) {
-                return Resources.DataType.STRING;
+            if(dtLeft == DataType.STRING || dtRight == DataType.STRING) {
+                return DataType.STRING;
             }
             //all the other options : (double|int) (+ - *) (double|int)
             else{
-                return Resources.DataType.DOUBLE;
+                return DataType.DOUBLE;
             }
         }
         else
