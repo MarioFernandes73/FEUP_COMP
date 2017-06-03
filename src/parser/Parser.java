@@ -5,6 +5,7 @@ import cli.Resources.JSONType;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import semantic.Exceptions;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,8 +34,31 @@ public class Parser
 
     public void run()
     {
-        analyzeBody(root, getHir());
-        typeInference(getHir());
+        try
+        {
+            analyzeBody(root, getHir());
+            typeInference(getHir());
+        }
+        catch (Exceptions.AssignmentException e)
+        {
+           System.err.println(e.getMessage());
+           System.exit(1);
+        }
+        catch (Exceptions.TypeMismatchException e)
+        {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        catch (Exceptions.InitializationException e)
+        {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        catch (Exceptions.InvalidOperationException e)
+        {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
     }
 
     /**
@@ -84,7 +108,7 @@ public class Parser
         return stringBuilder.toString();
     }
 
-    private void analyzeBody(JsonObject jobject, Node node)
+    private void analyzeBody(JsonObject jobject, Node node) throws Exceptions.AssignmentException, Exceptions.TypeMismatchException
     {
         System.out.println(" --- begin --- \n\nCurrent Node : "+node.getType());
 
@@ -257,14 +281,15 @@ public class Parser
                     //literal : type(dataType), specification(data), specification(NULL)
                     else if(value.equals("Literal"))
                     {
-                        newNode = createNewNode(currentNode, null, null, null);
+                        Descriptor d = new Descriptor(null, Resources.DataType.NOTASSIGNED);
+                        newNode = createNewNode(currentNode, JSONType.LITERAL, null, d);
                     }
-                    else if(key.equals("value") && newNode != null)
+                    else if(key.equals("value") && currentNode.getType() == JSONType.LITERAL)
                     {
                         currentNode.setSpecification(value);
                         setType(currentNode,value);
                     }
-                    else if(key.equals("raw") && newNode != null)
+                    else if(key.equals("raw") && currentNode.getType() == JSONType.LITERAL)
                     {
                         confirmType(currentNode,value);
                     }
@@ -290,7 +315,6 @@ public class Parser
                               && nodeReference == null)
                     {
                         setReference(currentNode, value);
-
                     }
 
                     break;
@@ -330,35 +354,36 @@ public class Parser
         return newNode;
     }
 
-    private Descriptor setReference(Node node, String value)
+    private Descriptor setReference(Node node, String value) throws Exceptions.AssignmentException
     {
-        Descriptor d = findDescriptorAtLastST(value);
+        Descriptor d = null;
+        d = findDescriptorAtLastST(value);
         node.setReference(d);
 
         return d;
     }
 
-    private void setDescriptorType(Node node, JSONType descriptorType)
+    private void setDescriptorType(Node node, Resources.DataType descriptorType) throws Exceptions.TypeMismatchException
     {
-        if(descriptorType == JSONType.INT){
+        if(descriptorType == Resources.DataType.INT){
             if(node.getSpecification().equals("storearray")){
                 node.setDescriptorType(Resources.DataType.ARRAYINT);
             }else{
                 node.setDescriptorType(Resources.DataType.INT);
             }
-        }else if(descriptorType == JSONType.STRING){
+        }else if(descriptorType == Resources.DataType.STRING){
             if(node.getSpecification().equals("storearray")){
                 node.setDescriptorType(Resources.DataType.ARRAYSTRING);
             }else{
                 node.setDescriptorType(Resources.DataType.STRING);
             }
-        }else if(descriptorType == JSONType.BOOLEAN){
+        }else if(descriptorType == Resources.DataType.BOOLEAN){
             if(node.getSpecification().equals("storearray")){
                 node.setDescriptorType(Resources.DataType.ARRAYBOOLEAN);
             }else{
                 node.setDescriptorType(Resources.DataType.BOOLEAN);
             }
-        }else if(descriptorType == JSONType.DOUBLE){
+        }else if(descriptorType == Resources.DataType.DOUBLE){
             if(node.getSpecification().equals("storearray")){
                 node.setDescriptorType(Resources.DataType.ARRAYDOUBLE);
             }else{
@@ -367,29 +392,31 @@ public class Parser
         }
     }
 
-    private void setType(Node currentNode, String key)
+    private void setType(Node node, String key) throws Exceptions.TypeMismatchException
     {
-        if(isInteger(key)){
-            currentNode.setType(JSONType.INT);
+        if(isInteger(key))
+        {
+            node.setDescriptorType(Resources.DataType.INT);
         }
-        else if(key.equals("true") || key.equals("false")){
-            currentNode.setType(JSONType.BOOLEAN);
+        else if(key.equals("true") || key.equals("false"))
+        {
+            node.setDescriptorType(Resources.DataType.BOOLEAN);
         }
         else{
-            currentNode.setType(JSONType.STRING);
+            node.setDescriptorType(Resources.DataType.STRING);
         }
     }
 
-    private void confirmType(Node currentNode, String key)
+    private void confirmType(Node currentNode, String key) throws Exceptions.TypeMismatchException
     {
-        if(currentNode.getType() == JSONType.INT) {
+        if(currentNode.getReference().getType() == Resources.DataType.INT) {
             if (key.contains(".")) {
-                currentNode.setType(JSONType.DOUBLE);
+                currentNode.setDescriptorType(Resources.DataType.DOUBLE);
             }
         }
     }
 
-    public static boolean isInteger(String s)
+    private static boolean isInteger(String s)
     {
         try {
             Integer.parseInt(s);
@@ -421,23 +448,31 @@ public class Parser
         st.addReturn(d);
     }
 
-    private Descriptor findDescriptorAtLastST(String value){
+    private Descriptor findDescriptorAtLastST(String value) throws Exceptions.AssignmentException
+    {
         SymbolTable st = getTables().get(getTables().size()-1);
 
         Descriptor d = st.findParam(value);
 
-        if(d == null)
+        if(d == null){
             d = st.findLocal(value);
+            if(d == null){
+                throw new Exceptions.AssignmentException(value);
+            }
+        }
 
         return d;
     }
 
-    private void typeInference(Node node)
+    private void typeInference(Node node) throws Exceptions.TypeMismatchException, Exceptions.InitializationException, Exceptions.InvalidOperationException
     {
         //if not null reference, must interpret its childs
         if (node.getReference() != null && node.getSpecification().contains("store"))
         {
             ArrayList<Node> nodes = node.getAdj();
+            if(nodes.size() == 0)
+                return;
+
             Node firstNode = nodes.get(0);
 
             if(node.getSpecification().equals("storearray") ){
@@ -446,32 +481,29 @@ public class Parser
             }
 
             if(nodes.get(0).getType() == JSONType.OPERATION){
-                System.out.println("2");
                 Resources.DataType dt = typeInferenceOp(firstNode);
                 node.setDescriptorType(dt);
             }
             else{
-                System.out.println("1");
-                setDescriptorType(node, firstNode.getType());
+                setDescriptorType(node, firstNode.getDescriptorType());
             }
 
             return;
         }
 
         ArrayList<Node> nodes = node.getAdj();
-        for (Node n : nodes)
-        {
+        for (Node n : nodes) {
             typeInference(n);
         }
     }
 
-    private Resources.DataType typeInferenceOp(Node node)
+    private Resources.DataType typeInferenceOp(Node node) throws Exceptions.InitializationException, Exceptions.InvalidOperationException
     {
         ArrayList<Node> nodes = node.getAdj();
         ArrayList<Resources.DataType> dataTypes = new ArrayList<>();
 
         for(Node n : nodes){
-            if(n.getSpecification().equals("load"))
+            if(n.getType() == JSONType.IDENTIFIER || n.getType() == JSONType.LITERAL)
                 dataTypes.add(n.getReference().getType());
             else
             {
@@ -480,27 +512,56 @@ public class Parser
             }
         }
 
-        if(node.getSpecification().equals("*") || node.getSpecification().equals("+") || node.getSpecification().equals("-")){
-            return getDescriptionTypeOp(nodes);
-        }
-        else if(node.getSpecification().equals("/")){
-           return Resources.DataType.DOUBLE;
-        }
-
-        return Resources.DataType.NOTASSIGNED;
+        return getDescriptionTypeOp(nodes,node.getSpecification());
     }
 
-    private Resources.DataType getDescriptionTypeOp(ArrayList<Node> nodes)
+    //TODO testar arrays
+    private Resources.DataType getDescriptionTypeOp(ArrayList<Node> nodes, String op) throws Exceptions.InitializationException, Exceptions.InvalidOperationException
     {
-        Resources.DataType dtRight = nodes.get(0).getReference().getType();
-        Resources.DataType dtLeft = nodes.get(1).getReference().getType();
+        Resources.DataType dtLeft = nodes.get(0).getReference().getType();
 
-        if(dtLeft != dtRight){
-            if(dtLeft == Resources.DataType.DOUBLE || dtRight == Resources.DataType.DOUBLE){
-                return Resources.DataType.DOUBLE;
+        //if some variables are NOT ASSIGNED -> problems with initialization
+        if(dtLeft == Resources.DataType.NOTASSIGNED){
+            throw new Exceptions.InitializationException(nodes.get(0).getReference().getName());
+        }
+        //- / * only allowed for numbers
+        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtLeft == Resources.DataType.INT || dtLeft == Resources.DataType.DOUBLE)) {
+            throw new Exceptions.InvalidOperationException();
+        }
+        // + not allowed for booleans
+        if(op.equals("+") && (dtLeft == Resources.DataType.BOOLEAN )) {
+            throw new Exceptions.InvalidOperationException();
+        }
+
+        Resources.DataType dtRight = nodes.get(1).getReference().getType();
+
+        //if some variables are NOT ASSIGNED -> problems with initialization
+        if(dtRight == Resources.DataType.NOTASSIGNED){
+            throw new Exceptions.InitializationException(nodes.get(1).getReference().getName());
+        }
+        // - / * only allowed for numbers
+        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtRight == Resources.DataType.INT || dtRight == Resources.DataType.DOUBLE)) {
+            throw new Exceptions.InvalidOperationException();
+        }
+        // + not allowed for booleans
+        if(op.equals("+") && dtRight == Resources.DataType.BOOLEAN) {
+            throw new Exceptions.InvalidOperationException();
+        }
+
+        // division --> always double
+        if(op.equals("/"))
+            return Resources.DataType.DOUBLE;
+
+        //if different -> must apply type inference
+        if((dtLeft != dtRight))
+        {
+            //string + (int|double)
+            if(dtLeft == Resources.DataType.STRING || dtRight == Resources.DataType.STRING) {
+                return Resources.DataType.STRING;
             }
+            //all the other options : (double|int) (+ - *) (double|int)
             else{
-                return Resources.DataType.NOTASSIGNED;
+                return Resources.DataType.DOUBLE;
             }
         }
         else

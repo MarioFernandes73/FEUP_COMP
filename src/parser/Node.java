@@ -2,6 +2,7 @@ package parser;
 
 import cli.Resources;
 import cli.Resources.JSONType;
+import semantic.Exceptions;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,15 @@ public class Node
 		this.adj = adj;
 	}
 
-    public void setDescriptorType(final Resources.DataType descriptorType) {
-        this.reference.setType(descriptorType);
+    public void setDescriptorType(final Resources.DataType descriptorType) throws Exceptions.TypeMismatchException
+    {
+        if(this.reference.getType() == Resources.DataType.NOTASSIGNED || this.reference.getType() == descriptorType)
+            this.reference.setType(descriptorType);
+        else
+            throw new Exceptions.TypeMismatchException(this.reference.getName());
+    }
+
+    public Resources.DataType getDescriptorType() {
+        return this.reference.getType();
     }
 }

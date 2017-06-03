@@ -56,7 +56,7 @@ public class CodeGenerator {
                 content += node.getReference().getName();
                 break;
             }
-            case INT: case DOUBLE: case STRING: case BOOLEAN:{
+            case LITERAL:{
                 content += node.getSpecification();
                 break;
             }

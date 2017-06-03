@@ -19,6 +19,8 @@ public class Descriptor
 
     public String getName()
     {
+        if(name == null)
+            return "LITERAL";
         return name;
     }
 

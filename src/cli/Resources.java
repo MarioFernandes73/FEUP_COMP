@@ -15,7 +15,8 @@ public class Resources
 		FUNCTION,				//function node
 		PARAM,					//function parameter
 		RETURN,					//function return
-		INT, DOUBLE, STRING, BOOLEAN,	//data types for literals
+		//INT, DOUBLE, STRING, BOOLEAN,	//data types for literals
+        LITERAL,
 		IDENTIFIER,				//descriptor	(load or loadarray)
 		VARIABLEDECLARATION,	//var a = b 	(store)  	
 								//var a = [0,2] (storearray)
