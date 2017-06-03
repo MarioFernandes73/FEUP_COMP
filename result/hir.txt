@@ -1,0 +1,15 @@
+
+Type  : START
+Specification : null
+
+- Type  : FUNCTION
+- Specification : teste
+
+- - Type  : VARIABLEDECLARATION
+- - Specification : store
+- - Descriptor ( Name : a | Type : INT )
+
+- - - Type  : LITERAL
+- - - Specification : 5
+- - - Descriptor ( Name : LITERAL | Type : INT )
+

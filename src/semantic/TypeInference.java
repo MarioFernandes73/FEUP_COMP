@@ -13,11 +13,13 @@ public class TypeInference
     private ArrayList<SymbolTable> tables = new ArrayList<>();
     private Node hir;
     private SymbolTable currentTable;
+    private String errorMessage;
 
     public TypeInference(ArrayList<SymbolTable> tables, Node hir){
         this.tables = tables;
         this.hir = hir;
         this.currentTable = tables.get(0);
+        this.errorMessage = null;
     }
 
     public void run(){
@@ -27,28 +29,33 @@ public class TypeInference
             verifyCalleeArgsRetType(hir);
         }
         catch (Exceptions.TypeMismatchException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.InitializationException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidOperationException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+             /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidReturnTypeException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
         catch (Exceptions.FunctionNameException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+             /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidNumArgsException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+             /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
     }
 
@@ -330,6 +337,10 @@ public class TypeInference
         }
         else
             return dtRight;
+    }
+
+    public String getErrorMessage(){
+        return errorMessage;
     }
 
 }

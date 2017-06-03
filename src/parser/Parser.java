@@ -20,16 +20,19 @@ public class Parser
     private ArrayList<SymbolTable> tables = new ArrayList<>();
     private Node hir;
     private JsonObject root;
+    private String errorMessage;
 
-    public Parser(String filename)
+    public Parser(String jsonCode)
     {
-        File json = new File(filename);
+        //File json = new File(jsonCode);
+        //jsonCode = read(json);
 
-        String jsonToString = read(json);
-        JsonElement jelement = new JsonParser().parse(jsonToString);
+        JsonElement jelement = new JsonParser().parse(jsonCode);
 
         root = jelement.getAsJsonObject();
         setHir(new Node(JSONType.START));
+
+        errorMessage = null;
     }
 
     public void run()
@@ -38,16 +41,19 @@ public class Parser
             analyzeBody(root, getHir());
         }
         catch (Exceptions.AssignmentException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.TypeMismatchException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.FunctionNameException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            /*System.err.println(e.getMessage());
+            System.exit(1);*/
+            errorMessage = e.getMessage();
         }
     }
 
@@ -341,8 +347,7 @@ public class Parser
                         Node elseNode = createNewNode(currentNode, JSONType.ELSE, null, null);
                         analyzeBody(entry.getValue().getAsJsonObject(),elseNode);
                     }
-                    else
-                    {
+                    else {
                         analyzeBody(entry.getValue().getAsJsonObject(),currentNode);
                     }
 
@@ -475,5 +480,9 @@ public class Parser
     public void setHir(Node hir)
     {
         this.hir = hir;
+    }
+
+    public String getErrorMessage(){
+        return errorMessage;
     }
 }

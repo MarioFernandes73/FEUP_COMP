@@ -3,6 +3,7 @@ package codegeneration;
 import cli.Resources;
 import cli.Resources.DataType;
 import cli.Resources.JSONType;
+import parser.Descriptor;
 import parser.Node;
 import parser.SymbolTable;
 
@@ -254,5 +255,46 @@ public class CodeGenerator {
         }
         else
             return n.getReference().getType();
+    }
+
+    public String printHIR(Node n, String spacement)
+    {
+        String res = "\n";
+        res += spacement + "Type  : " + n.getType().toString()+"\n";
+        res += spacement + "Specification : "+n.getSpecification()+"\n";
+
+        Descriptor d = n.getReference();
+        if(d != null)
+            res += spacement + "Descriptor ( Name : "+ d.getName() + " | Type : "+ d.getType() +" )\n";
+
+        for(Node n1 : n.getAdj())
+        {
+            res += printHIR(n1, spacement+"- ");
+        }
+        return res;
+    }
+
+    public String printSymbolTable(ArrayList<SymbolTable> tables)
+    {
+        String res = "\n";
+
+        for(SymbolTable st : tables)
+        {
+            res += "Function \n   Name : " + st.getFunctionName() + "\n   Params : \n";
+
+            for(Descriptor d : st.params)
+                res += "      Name : " + d.getName() + "   AND   Type : " + d.getType()+"\n";
+
+            res += "   Locals : \n";
+            for(Descriptor d : st.locals)
+                res += "      Name : " + d.getName() + "   AND   Type : " + d.getType()+"\n";
+
+            if(st.getFunctionReturn() != DataType.NOTASSIGNED)
+                res += "   Return Type : "+ st.getFunctionReturn().name()+"\n";
+            else
+                res += "   Return : void\n";
+        }
+
+        return res;
     }
 }
