@@ -292,7 +292,7 @@ public class Parser
                         newNode = createNewNode(currentNode, JSONType.OPERATION, null, null);
                     }
                     //add specification to OPERATION
-                    else if(key.equals("operator") && nodeType == JSONType.OPERATION)
+                    else if(key.equals("operator") && (nodeType == JSONType.OPERATION || nodeType == JSONType.ASSIGNMENT))
                     {
                         currentNode.setSpecification(value);
                     }
@@ -330,7 +330,7 @@ public class Parser
 
                     //adding a descriptor to some load/store or arg node
                     else if(key.equals("name") &&
-                              (nodeType == JSONType.ARG || (nodeSpecification != null && (nodeSpecification.equals("store") ||
+                              (nodeType == JSONType.ARG || nodeType == JSONType.ASSIGNMENT || (nodeSpecification != null && (nodeSpecification.equals("store") ||
                                                                                             nodeSpecification.equals("load")))
                               && nodeReference == null))
                     {

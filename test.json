@@ -20,7 +20,11 @@
                   "type": "Identifier",
                   "name": "a"
                 },
-                "init": null
+                "init": {
+                  "type": "Literal",
+                  "value": 2,
+                  "raw": "2"
+                }
               }
             ],
             "kind": "var"
@@ -90,35 +94,31 @@
             }
           },
           {
-            "type": "WhileStatement",
-            "test": {
-              "type": "BinaryExpression",
-              "operator": "<",
-              "left": {
-                "type": "Identifier",
-                "name": "a"
-              },
-              "right": {
-                "type": "Identifier",
-                "name": "d"
-              }
-            },
+            "type": "DoWhileStatement",
             "body": {
               "type": "BlockStatement",
               "body": [
                 {
                   "type": "ExpressionStatement",
                   "expression": {
-                    "type": "UpdateExpression",
-                    "operator": "++",
-                    "argument": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
                       "type": "Identifier",
                       "name": "a"
                     },
-                    "prefix": false
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
                   }
                 }
               ]
+            },
+            "test": {
+              "type": "Identifier",
+              "name": "d"
             }
           },
           {

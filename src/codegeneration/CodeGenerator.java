@@ -72,6 +72,10 @@ public class CodeGenerator {
                 content += handleWhile(node.getAdj());
                 break;
             }
+            case DOWHILESTATEMENT:{
+                content += handleDoWhile(node.getAdj());
+                break;
+            }
             case ARRAYLOAD:{
                 content += handleArray(node.getAdj());
                 break;
@@ -164,7 +168,10 @@ public class CodeGenerator {
         String code = new String("");
         int i = 0;
 
-        code += node.getReference().getName();
+        code += assignment.get(i).getReference().getName() + " " + node.getSpecification() + " ";
+
+        i++;
+
 
         if(node.getSpecification().equals("storearray")){
             /*
@@ -173,7 +180,7 @@ public class CodeGenerator {
         }
 
         while(i < node.getAdj().size()){
-            code += " = " + generate(node.getAdj().get(i));
+            code += generate(node.getAdj().get(i));
             i++;
         }
         return code;
@@ -259,6 +266,23 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleDoWhile(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "do\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        int i = 0;
+        for(i = 0; i < subnodes.size()-1; i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}while(" + generate(subnodes.get(i)) + ")\n";
+
+        return code;
+    }
+
     public boolean isSingleLeftOperation(String operation){
         if(operation.equals("!"))
             return true;
@@ -277,7 +301,7 @@ public class CodeGenerator {
     }
 
     public String endPunctuation(JSONType type){
-        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT)))
+        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT) || type.equals(JSONType.DOWHILESTATEMENT)))
             return ";";
         else
             return "";
