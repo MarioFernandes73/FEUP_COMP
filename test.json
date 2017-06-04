@@ -5,7 +5,7 @@
       "type": "FunctionDeclaration",
       "id": {
         "type": "Identifier",
-        "name": "first"
+        "name": "a"
       },
       "params": [],
       "body": {
@@ -20,11 +20,21 @@
                   "type": "Identifier",
                   "name": "a"
                 },
-                "init": {
-                  "type": "Literal",
-                  "value": "ola",
-                  "raw": "\"ola\""
-                }
+                "init": null
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "d"
+                },
+                "init": null
               }
             ],
             "kind": "var"
@@ -32,91 +42,100 @@
           {
             "type": "ExpressionStatement",
             "expression": {
-              "type": "CallExpression",
-              "callee": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
                 "type": "Identifier",
-                "name": "second"
+                "name": "a"
               },
-              "arguments": [
-                {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                {
+              "right": {
+                "type": "BinaryExpression",
+                "operator": "+",
+                "left": {
                   "type": "Literal",
-                  "value": 5,
-                  "raw": "5"
+                  "value": 1,
+                  "raw": "1"
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 2,
+                  "raw": "2"
+                }
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "Identifier",
+                "name": "d"
+              },
+              "right": {
+                "type": "LogicalExpression",
+                "operator": "&&",
+                "left": {
+                  "type": "Literal",
+                  "value": true,
+                  "raw": "true"
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": false,
+                  "raw": "false"
+                }
+              }
+            }
+          },
+          {
+            "type": "WhileStatement",
+            "test": {
+              "type": "BinaryExpression",
+              "operator": "<",
+              "left": {
+                "type": "Identifier",
+                "name": "a"
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "d"
+              }
+            },
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "UpdateExpression",
+                    "operator": "++",
+                    "argument": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "prefix": false
+                  }
                 }
               ]
             }
-          }
-        ]
-      },
-      "generator": false,
-      "expression": false
-    },
-    {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "third"
-      },
-      "params": [],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
+          },
           {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Literal",
-              "value": 5,
-              "raw": "5"
-            }
-          }
-        ]
-      },
-      "generator": false,
-      "expression": false
-    },
-    {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "second"
-      },
-      "params": [
-        {
-          "type": "Identifier",
-          "name": "a"
-        },
-        {
-          "type": "Identifier",
-          "name": "b"
-        }
-      ],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "c"
-                },
-                "init": {
-                  "type": "CallExpression",
-                  "callee": {
-                    "type": "Identifier",
-                    "name": "third"
-                  },
-                  "arguments": []
-                }
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "Identifier",
+                "name": "d"
+              },
+              "right": {
+                "type": "Literal",
+                "value": false,
+                "raw": "false"
               }
-            ],
-            "kind": "var"
+            }
           }
         ]
       },

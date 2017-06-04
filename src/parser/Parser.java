@@ -24,14 +24,14 @@ public class Parser
 
     public Parser(String jsonCode)
     {
-        //File json = new File(jsonCode);
-        //jsonCode = read(json);
+        //Comentar depois
+        File json = new File(jsonCode);
+        jsonCode = read(json);
 
         JsonElement jelement = new JsonParser().parse(jsonCode);
 
         root = jelement.getAsJsonObject();
         setHir(new Node(JSONType.START));
-
         errorMessage = null;
     }
 
@@ -321,18 +321,18 @@ public class Parser
                               !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION ||
                                   nodeType == JSONType.CALLEE || nodeType == JSONType.ARG))
                     {
-                        //
-                        if(!((nodeSpecification.equals("store") || nodeSpecification.equals("load"))
-                               && nodeReference == null))
-                        {
+
+                        if (!(nodeSpecification != null && ((nodeSpecification.equals("store") || nodeSpecification.equals("load")))
+                                && nodeReference == null) || nodeType == JSONType.WHILESTATEMENT || nodeType == JSONType.IFSTATEMENT) {
                             newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
                         }
                     }
 
                     //adding a descriptor to some load/store or arg node
                     else if(key.equals("name") &&
-                              (nodeType == JSONType.ARG || nodeSpecification.equals("store") || nodeSpecification.equals("load"))
-                              && nodeReference == null)
+                              (nodeType == JSONType.ARG || (nodeSpecification != null && (nodeSpecification.equals("store") ||
+                                                                                            nodeSpecification.equals("load")))
+                              && nodeReference == null))
                     {
                         setReference(currentNode, value);
                     }

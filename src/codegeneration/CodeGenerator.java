@@ -32,10 +32,7 @@ public class CodeGenerator {
 
         Resources.JSONType type = node.getType();
 
-        //Displays
-        System.out.println(node.getType() + " " + node.getSpecification());
-        if(node.getReference() != null)
-            System.out.println(" " + node.getReference().getName() + " " + node.getReference().getType() + "\n");
+        System.out.println(getProperties(node));
 
         switch (type) {
             case START:{
@@ -69,6 +66,10 @@ public class CodeGenerator {
             }
             case IFSTATEMENT:{
                 content += handleIf(node.getAdj());
+                break;
+            }
+            case WHILESTATEMENT:{
+                content += handleWhile(node.getAdj());
                 break;
             }
             case ARRAYLOAD:{
@@ -148,7 +149,7 @@ public class CodeGenerator {
         }
         //Individual declaration
         else{
-            code += node.getReference().getName();
+            code += node.getReference().getType() + " " + node.getReference().getName();
 
             //If direct assignment
             for(Node n : node.getAdj()){
@@ -208,8 +209,11 @@ public class CodeGenerator {
     public String handleOperation(Node node, ArrayList<Node> subnodes){
         String code = new String("");
 
-        if(node.getSpecification().equals("!")){
+        if(isSingleLeftOperation(node.getSpecification())){
             code += "!(" + generate(subnodes.get(0)) + ")";
+        }
+        else if(isSingleRightOperation(node.getSpecification())){
+            code += generate(node.getAdj().get(0)) + node.getSpecification();
         }
         else{
             code += "(" + generate(node.getAdj().get(0)); //right
@@ -238,6 +242,36 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleWhile(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "while(" + generate(subnodes.get(0)) + ")\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 1; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
+    public boolean isSingleLeftOperation(String operation){
+        if(operation.equals("!"))
+            return true;
+        else return false;
+    }
+
+    public boolean isSingleRightOperation(String operation){
+        if(operation.equals("++") || operation.equals("--"))
+            return true;
+        else
+            return false;
+    }
+
     public String getCode(){
         return code;
     }
@@ -247,6 +281,18 @@ public class CodeGenerator {
             return ";";
         else
             return "";
+    }
+
+    public String getProperties(Node node){
+        String info = new String("");
+        //Displays
+        info += node.getType() + " " + node.getSpecification();
+        if(node.getReference() != null)
+            info += " " + node.getReference().getName() + " " + node.getReference().getType() + " ";
+
+        info += "Childs: " + node.getAdj().size() + "\n";
+
+        return info;
     }
 
     public DataType getType(Node n){
