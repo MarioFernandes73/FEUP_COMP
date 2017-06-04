@@ -157,7 +157,7 @@ public class CodeGenerator {
         }
         //Individual declaration
         else{
-            code += node.getReference().getType() + " " + node.getReference().getName();
+            code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
 
             //If direct assignment
             for(Node n : node.getAdj()){
