@@ -94,7 +94,46 @@
             }
           },
           {
-            "type": "DoWhileStatement",
+            "type": "ForStatement",
+            "init": {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "i"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 0,
+                    "raw": "0"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            "test": {
+              "type": "BinaryExpression",
+              "operator": "<",
+              "left": {
+                "type": "Identifier",
+                "name": "i"
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "a"
+              }
+            },
+            "update": {
+              "type": "UpdateExpression",
+              "operator": "++",
+              "argument": {
+                "type": "Identifier",
+                "name": "i"
+              },
+              "prefix": false
+            },
             "body": {
               "type": "BlockStatement",
               "body": [
@@ -105,20 +144,16 @@
                     "operator": "=",
                     "left": {
                       "type": "Identifier",
-                      "name": "a"
+                      "name": "d"
                     },
                     "right": {
                       "type": "Literal",
-                      "value": 1,
-                      "raw": "1"
+                      "value": false,
+                      "raw": "false"
                     }
                   }
                 }
               ]
-            },
-            "test": {
-              "type": "Identifier",
-              "name": "d"
             }
           },
           {

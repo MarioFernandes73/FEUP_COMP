@@ -76,6 +76,10 @@ public class CodeGenerator {
                 content += handleDoWhile(node.getAdj());
                 break;
             }
+            case FORSTATEMENT:{
+                content += handleFor(node.getAdj());
+                break;
+            }
             case ARRAYLOAD:{
                 content += handleArray(node.getAdj());
                 break;
@@ -283,6 +287,25 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleFor(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "for(" +
+                generate(subnodes.get(0)) + " ; " +   //init
+                generate(subnodes.get(1)) + " ; " +   //test
+                generate(subnodes.get(2)) + ")\n" +   //inc
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 3; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
     public boolean isSingleLeftOperation(String operation){
         if(operation.equals("!"))
             return true;
@@ -301,7 +324,8 @@ public class CodeGenerator {
     }
 
     public String endPunctuation(JSONType type){
-        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT) || type.equals(JSONType.DOWHILESTATEMENT)))
+        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT) ||
+            type.equals(JSONType.DOWHILESTATEMENT) || type.equals(JSONType.FORSTATEMENT)))
             return ";";
         else
             return "";
