@@ -39,7 +39,3 @@ Geração de Código
 * nome da função
 * argumentos;
 * FALTA: return dessas funções
-
-### Falta
-* verificar com arrays em geral 
-* verificar com arrays de várias dimensões
