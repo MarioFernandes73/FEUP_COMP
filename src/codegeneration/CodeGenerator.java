@@ -32,10 +32,7 @@ public class CodeGenerator {
 
         Resources.JSONType type = node.getType();
 
-        //Displays
-        System.out.println(node.getType() + " " + node.getSpecification());
-        if(node.getReference() != null)
-            System.out.println(" " + node.getReference().getName() + " " + node.getReference().getType() + "\n");
+        System.out.println(getProperties(node));
 
         switch (type) {
             case START:{
@@ -71,6 +68,18 @@ public class CodeGenerator {
                 content += handleIf(node.getAdj());
                 break;
             }
+            case WHILESTATEMENT:{
+                content += handleWhile(node.getAdj());
+                break;
+            }
+            case DOWHILESTATEMENT:{
+                content += handleDoWhile(node.getAdj());
+                break;
+            }
+            case FORSTATEMENT:{
+                content += handleFor(node.getAdj());
+                break;
+            }
             case ARRAYLOAD:{
                 content += handleArray(node.getAdj());
                 break;
@@ -79,8 +88,10 @@ public class CodeGenerator {
                 content += handleArrayContent(node.getAdj());
                 break;
             }
-            //Conditions
-            //Loops
+            case RETURN:{
+                content += handleReturn(node.getAdj());
+                break;
+            }
             default:
                 break;
         }
@@ -101,10 +112,6 @@ public class CodeGenerator {
                 else
                     code += ",";
                 code+= c.getReference().getName();
-            }
-            //return
-            else if(c.getType() == Resources.JSONType.RETURN){
-                code += "\n\n" + spacement + "return " + generate(c.getAdj().get(0)) + ";";
             }
             //body
             else{
@@ -148,7 +155,7 @@ public class CodeGenerator {
         }
         //Individual declaration
         else{
-            code += node.getReference().getName();
+            code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
 
             //If direct assignment
             for(Node n : node.getAdj()){
@@ -163,7 +170,10 @@ public class CodeGenerator {
         String code = new String("");
         int i = 0;
 
-        code += node.getReference().getName();
+        code += assignment.get(i).getReference().getName() + " " + node.getSpecification() + " ";
+
+        i++;
+
 
         if(node.getSpecification().equals("storearray")){
             /*
@@ -172,7 +182,7 @@ public class CodeGenerator {
         }
 
         while(i < node.getAdj().size()){
-            code += " = " + generate(node.getAdj().get(i));
+            code += generate(node.getAdj().get(i));
             i++;
         }
         return code;
@@ -208,8 +218,11 @@ public class CodeGenerator {
     public String handleOperation(Node node, ArrayList<Node> subnodes){
         String code = new String("");
 
-        if(node.getSpecification().equals("!")){
+        if(isSingleLeftOperation(node.getSpecification())){
             code += "!(" + generate(subnodes.get(0)) + ")";
+        }
+        else if(isSingleRightOperation(node.getSpecification())){
+            code += generate(node.getAdj().get(0)) + node.getSpecification();
         }
         else{
             code += "(" + generate(node.getAdj().get(0)); //right
@@ -238,15 +251,101 @@ public class CodeGenerator {
         return code;
     }
 
+    public String handleWhile(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "while(" + generate(subnodes.get(0)) + ")\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 1; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
+    public String handleDoWhile(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "do\n" +
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        int i = 0;
+        for(i = 0; i < subnodes.size()-1; i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}while(" + generate(subnodes.get(i)) + ")\n";
+
+        return code;
+    }
+
+    public String handleFor(ArrayList<Node> subnodes){
+        String code = new String("");
+        code += "\n" + spacement + "for(" +
+                generate(subnodes.get(0)) + " ; " +   //init
+                generate(subnodes.get(1)) + " ; " +   //test
+                generate(subnodes.get(2)) + ")\n" +   //inc
+                spacement +  "{\n";
+
+        spacement += Resources.DEF_SPC;
+
+        //body
+        for(int i = 3; i < subnodes.size(); i++)
+            code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
+        spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+        code += spacement +  "}\n";
+
+        return code;
+    }
+
+    public String handleReturn(ArrayList<Node> subnodes){
+        if(subnodes.size() > 0)
+            return "return " + generate(subnodes.get(0));
+        else
+            return "return void";
+    }
+
+    public boolean isSingleLeftOperation(String operation){
+        if(operation.equals("!"))
+            return true;
+        else return false;
+    }
+
+    public boolean isSingleRightOperation(String operation){
+        if(operation.equals("++") || operation.equals("--"))
+            return true;
+        else
+            return false;
+    }
+
     public String getCode(){
         return code;
     }
 
     public String endPunctuation(JSONType type){
-        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT)))
+        if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT) ||
+            type.equals(JSONType.DOWHILESTATEMENT) || type.equals(JSONType.FORSTATEMENT)))
             return ";";
         else
             return "";
+    }
+
+    public String getProperties(Node node){
+        String info = new String("");
+        //Displays
+        info += node.getType() + " " + node.getSpecification();
+        if(node.getReference() != null)
+            info += " " + node.getReference().getName() + " " + node.getReference().getType() + " ";
+
+        info += "Childs: " + node.getAdj().size() + "\n";
+
+        return info;
     }
 
     public DataType getType(Node n){

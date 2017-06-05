@@ -1,6 +1,8 @@
 package cli;
 
-public class Resources 
+import javax.xml.crypto.Data;
+
+public class Resources
 {
 	public enum DataType{
 		BOOLEAN, ARRAYBOOLEAN, 
@@ -36,4 +38,19 @@ public class Resources
 
 	final public static String DEF_SPC = new String("    ");
     final public static String DEFAULT_CHAR_SET = "UTF-8";
+
+    public static String DataTypeToString(DataType type){
+    	switch (type){
+			case INT: return "int";
+			case ARRAYINT: return "int[]";
+			case DOUBLE: return "double";
+			case ARRAYDOUBLE: return "double[]";
+			case STRING: return "String";
+			case ARRAYSTRING: return "String[]";
+			case ARRAYBOOLEAN: return "Boolean";
+			case BOOLEAN: return "Boolean[]";
+		}
+
+		return "incognito";
+	}
 }

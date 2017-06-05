@@ -12,12 +12,13 @@
           },
           "init": {
             "type": "Literal",
-            "value": "ola",
-            "raw": "\"ola\""
+            "value": 1,
+            "raw": "1"
           }
         }
       ],
       "kind": "var"
+
     }
   ],
   "sourceType": "script"

@@ -81,10 +81,10 @@ public class Interface
                 }
 
                 cg = new CodeGenerator(p.getHir(),p.getTables());
-                //cg.run();
+                cg.run();
 
                 errorsText.setText("Success!");
-                //javaCodeText.setText(cg.getCode());
+                javaCodeText.setText(cg.getCode());
                 hirText.setText(cg.printHIR(p.getHir(),""));
                 stText.setText(cg.printSymbolTable(p.getTables()));
             }

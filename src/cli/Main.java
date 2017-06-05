@@ -31,12 +31,13 @@ public class Main {
         CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
         cg.run();
         System.out.println(cg.getCode());
+<<<<<<< HEAD
+
+=======
+>>>>>>> 7e7968918378dcaa30454ca5450a6451e87f415e
 
 
-        /*System.out.println("\n------- START PRINTING HIR -------");
-        printHIR(p.getHir(),"");
-        System.out.println("\n------- START PRINTING SYMBOL TABLES -------");
-        printSymbolTable(p.getTables());*/
+
     }
 
 
