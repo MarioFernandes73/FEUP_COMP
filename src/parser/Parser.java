@@ -192,7 +192,7 @@ public class Parser
                     }
 
                     //return : type(RETURN), specification(NULL), reference(var name and type)
-                    else if(value.equals("ReturnStatement") && nodeType == JSONType.FUNCTION)
+                    else if(value.equals("ReturnStatement"))
                     {
                         //create new Node
                         newNode = createNewNode(currentNode, JSONType.RETURN, null, null);
