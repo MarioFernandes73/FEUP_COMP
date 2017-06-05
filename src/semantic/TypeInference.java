@@ -86,6 +86,18 @@ public class TypeInference
                 return;
             }
         }
+        else if(node.getType() == JSONType.ARG)
+        {
+            //arg is an expression
+            if(node.getReference() == null && node.getAdj().size() != 0)
+            {
+                System.out.println("entrou aqui");
+                //temp
+                node.setReference(new Descriptor("",DataType.NOTASSIGNED));
+                SemanticTypeInference(node,node.getAdj().get(0));
+                return;
+            }
+        }
         //return type
         else if(node.getType() == JSONType.RETURN)
         {

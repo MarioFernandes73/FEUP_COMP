@@ -64,9 +64,7 @@ public class WebCrawler
         driver.get(website);
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
-
-        Object result =
-          js.executeScript(
+        js.executeScript(
             "       var code = arguments[0];" +
               "        window.editor.setText(code);" +
               "        setTimeout(function(){ "
