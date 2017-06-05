@@ -47,8 +47,8 @@ public class Resources
 			case ARRAYDOUBLE: return "double[]";
 			case STRING: return "String";
 			case ARRAYSTRING: return "String[]";
-			case ARRAYBOOLEAN: return "Boolean";
-			case BOOLEAN: return "Boolean[]";
+			case ARRAYBOOLEAN: return "Boolean[]";
+			case BOOLEAN: return "Boolean";
 			default: return "Integer";
 		}
 	}
