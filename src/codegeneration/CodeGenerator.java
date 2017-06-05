@@ -223,8 +223,8 @@ public class CodeGenerator {
     public String handleOperation(Node node, ArrayList<Node> subnodes){
         String code = new String("");
 
-        if(isSingleLeftOperation(node.getSpecification())){
-            code += "!(" + generate(subnodes.get(0)) + ")";
+        if(isSingleLeftOperation(node.getSpecification()) && subnodes.size() == 1){
+            code += node.getSpecification() + "(" + generate(subnodes.get(0)) + ")";
         }
         else if(isSingleRightOperation(node.getSpecification())){
             code += generate(node.getAdj().get(0)) + node.getSpecification();
@@ -331,7 +331,7 @@ public class CodeGenerator {
     }
 
     public boolean isSingleLeftOperation(String operation){
-        if(operation.equals("!"))
+        if(operation.equals("!") || operation.equals("-"))
             return true;
         else return false;
     }
