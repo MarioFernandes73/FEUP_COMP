@@ -1,5 +1,6 @@
 package cli;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,10 +16,12 @@ public class WebCrawler
 {
     private String jsCode;
     private String jsonCode;
+    private String errorMessage;
 
     public WebCrawler(String jsCode){
         this.jsCode = jsCode;
         this.jsonCode = "";
+        this.errorMessage = null;
     }
 
     public void run(){
@@ -81,14 +84,14 @@ public class WebCrawler
 
         parsedCode = d.decode(driver.getCurrentUrl(), "UTF-8");
 
-        driver.close();
-
         parsedCode = parsedCode.replace(" ", "");
         parsedCode = parsedCode.replace("http://esprima.org/demo/", "");
 
         if (parsedCode.equals(errorReturn)){
-            jsonCode = null;
+            errorMessage = driver.findElement(By.id("info")).getText();
         }
+
+        driver.close();
 
        jsonCode = parsedCode;
     }
@@ -98,6 +101,6 @@ public class WebCrawler
     }
 
     public String getErrorMessage(){
-        return null;
+        return errorMessage;
     }
 }

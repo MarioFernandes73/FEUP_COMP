@@ -58,7 +58,7 @@ public class Interface
                 errorMessages = wc.getErrorMessage();
                 if(errorMessages != null)
                 {
-                    errorsText.setText(errorMessages);
+                    errorsText.setText("Semantic error :\n"+errorMessages);
                     return;
                 }
 
@@ -67,7 +67,7 @@ public class Interface
                 errorMessages = p.getErrorMessage();
                 if(errorMessages != null)
                 {
-                    errorsText.setText(errorMessages);
+                    errorsText.setText("Semantic error :\n\n"+errorMessages);
                     return;
                 }
 
@@ -76,13 +76,14 @@ public class Interface
                 errorMessages = ti.getErrorMessage();
                 if(errorMessages != null)
                 {
-                    errorsText.setText(errorMessages);
+                    errorsText.setText("Semantic error :\n\n"+errorMessages);
                     return;
                 }
 
                 cg = new CodeGenerator(p.getHir(),p.getTables());
                 //cg.run();
 
+                errorsText.setText("Success!");
                 //javaCodeText.setText(cg.getCode());
                 hirText.setText(cg.printHIR(p.getHir(),""));
                 stText.setText(cg.printSymbolTable(p.getTables()));
