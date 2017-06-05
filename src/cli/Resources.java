@@ -41,10 +41,14 @@ public class Resources
 
     public static String DataTypeToString(DataType type){
     	switch (type){
-			case INT: case ARRAYINT: return "int";
-			case DOUBLE: case ARRAYDOUBLE: return "double";
-			case STRING: case ARRAYSTRING: return "String";
-			case ARRAYBOOLEAN: case BOOLEAN: return "boolean";
+			case INT: return "int";
+			case ARRAYINT: return "int[]";
+			case DOUBLE: return "double";
+			case ARRAYDOUBLE: return "double[]";
+			case STRING: return "String";
+			case ARRAYSTRING: return "String[]";
+			case ARRAYBOOLEAN: return "Boolean";
+			case BOOLEAN: return "Boolean[]";
 		}
 
 		return "incognito";

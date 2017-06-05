@@ -88,8 +88,10 @@ public class CodeGenerator {
                 content += handleArrayContent(node.getAdj());
                 break;
             }
-            //Conditions
-            //Loops
+            case RETURN:{
+                content += handleReturn(node.getAdj());
+                break;
+            }
             default:
                 break;
         }
@@ -110,10 +112,6 @@ public class CodeGenerator {
                 else
                     code += ",";
                 code+= c.getReference().getName();
-            }
-            //return
-            else if(c.getType() == Resources.JSONType.RETURN){
-                code += "\n\n" + spacement + "return " + generate(c.getAdj().get(0)) + ";";
             }
             //body
             else{
@@ -304,6 +302,13 @@ public class CodeGenerator {
         code += spacement +  "}\n";
 
         return code;
+    }
+
+    public String handleReturn(ArrayList<Node> subnodes){
+        if(subnodes.size() > 0)
+            return "return " + generate(subnodes.get(0));
+        else
+            return "return void";
     }
 
     public boolean isSingleLeftOperation(String operation){
