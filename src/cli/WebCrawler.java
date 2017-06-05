@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import static java.lang.Thread.sleep;
 
@@ -71,21 +70,17 @@ public class WebCrawler
           js.executeScript(
             "       var code = arguments[0];" +
               "        window.editor.setText(code);" +
-              "        setTimeout(function(){ " +
-              "           window.location = id('syntax').value; " +
-              "        },1000);"
+              "        setTimeout(function(){ "
+              + "var a = id('syntax').value; "
+              + "window.document.write('<div id=\"aqui\"><p>'+a+'</p></div>'); "
+              + "},1000);"
 
             , jsCode);
 
 
         sleep(1100);
 
-        URLDecoder d = new URLDecoder();
-
-        parsedCode = d.decode(driver.getCurrentUrl(), "UTF-8");
-
-        parsedCode = parsedCode.replace(" ", "");
-        parsedCode = parsedCode.replace("http://esprima.org/demo/", "");
+        parsedCode = driver.findElement(By.id("aqui")).getText();
 
         System.out.println(parsedCode);
 

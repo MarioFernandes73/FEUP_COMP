@@ -20,8 +20,6 @@ import semantic.TypeInference;
 public class Main {
 
     public static void main(String[] args) {
-
-
     	Parser p = new Parser("test.json");
     	p.run();
 
@@ -31,14 +29,5 @@ public class Main {
         CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
         cg.run();
         System.out.println(cg.getCode());
-<<<<<<< HEAD
-
-=======
->>>>>>> 7e7968918378dcaa30454ca5450a6451e87f415e
-
-
-
     }
-
-
 }
