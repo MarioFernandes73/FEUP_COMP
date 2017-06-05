@@ -29,32 +29,26 @@ public class TypeInference
             verifyCalleeArgsRetType(hir);
         }
         catch (Exceptions.TypeMismatchException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InitializationException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidOperationException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidReturnTypeException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.FunctionNameException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidNumArgsException e) {
-            System.err.println(e.getMessage());
             e.printStackTrace();
             errorMessage = e.getMessage();
         }
@@ -105,7 +99,6 @@ public class TypeInference
         }
         //operations
         else if(node.getType() == JSONType.OPERATION) {
-            System.out.println("OPERADOR");
             DataType dt = typeInferenceOp(node);
 
             if(parent != null){
@@ -117,9 +110,8 @@ public class TypeInference
         else if(node.getSpecification() != null)
         {
             //assignments or variable declarations --> must analyse childs
-            if(node.getSpecification() == "store")
+            if(node.getSpecification().equals("store") )
             {
-                System.out.println("e store");
                 //childs
                 ArrayList<Node> nodes = node.getAdj();
 
@@ -130,7 +122,6 @@ public class TypeInference
                 //analyse first child
                 Node firstNode = nodes.get(0);
 
-                System.out.println("vai para o backtracking");
                 //semantic inference to sons
                 SemanticTypeInference(node,firstNode);
                 return;
@@ -140,19 +131,32 @@ public class TypeInference
                 DataType dt = typeInferenceArray(node);
 
                 //right side ? //TODO COMPOR
-                if(parent != null){
-                    parent.setDescriptorType(dt);
-                    return;
+                if(parent != null) {
+                   parent.setDescriptorType(dt);
+                   return;
                 }
             }
             //store arrays
-            else if(node.getSpecification().equals("storearray")){
-                DataType dt = typeInferenceArray(node);
+            else if(node.getSpecification().equals("storearray"))
+            {
+                Node firstNode = node.getAdj().get(0);
+                DataType dt = typeInferenceArray(firstNode);
 
-                if(parent != null){
-                    parent.setDescriptorType(getDescriptionTypeArrays(dt));
-                    return;
+                if(node.getType() == JSONType.VARIABLEDECLARATION){
+                    node.setDescriptorType(getDescriptionTypeArrays(dt));
                 }
+                else if(node.getType() == JSONType.ASSIGNMENT)
+                {
+                    //temp
+                    DataType dt1 = typeInferenceArray(firstNode);
+                    firstNode.setReference(new Descriptor("",dt1));
+                    //calcs
+                    Node secondNode = node.getAdj().get(1);
+                    SemanticTypeInference(firstNode,secondNode);
+                    //original
+                    firstNode.setReference(null);
+                }
+                return;
             }
             //identifiers and literals assignments to parents
             else if(parent != null) {
@@ -283,7 +287,6 @@ public class TypeInference
             else if(n.getType() == cli.Resources.JSONType.ARRAYLOAD)
             {
                 DataType dt = typeInferenceArray(n);
-                System.out.println("2 - "+dt);
                 dataTypes.add(dt);
             }
         }
@@ -323,7 +326,6 @@ public class TypeInference
             throw new Exceptions.InitializationException("resolver");
         }
         //- / * ++ -- only allowed for numbers
-        System.out.println("aqui : "+op);
         if((op.equals("/") || op.equals("-") || op.equals("*") || op.equals("++") || op.equals("--")) && !(dtLeft == DataType.INT || dtLeft == DataType.DOUBLE)) {
             throw new Exceptions.InvalidOperationException();
         }

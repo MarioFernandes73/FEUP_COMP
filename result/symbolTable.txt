@@ -1,7 +1,8 @@
 
 Function 
-   Name : teste
+   Name : main
    Params : 
    Locals : 
+      Name : a   AND   Type : ARRAYINT
    Return : void
 

@@ -3,5 +3,42 @@ Type  : START
 Specification : null
 
 - Type  : FUNCTION
-- Specification : teste
+- Specification : main
+
+- - Type  : VARIABLEDECLARATION
+- - Specification : storearray
+- - Descriptor ( Name : a | Type : ARRAYINT )
+
+- - - Type  : ARRAYDECLARATION
+- - - Specification : storearray
+
+- - - - Type  : LITERAL
+- - - - Specification : 0
+- - - - Descriptor ( Name : LITERAL | Type : INT )
+
+- - - - Type  : LITERAL
+- - - - Specification : 1
+- - - - Descriptor ( Name : LITERAL | Type : INT )
+
+- - - - Type  : LITERAL
+- - - - Specification : 2
+- - - - Descriptor ( Name : LITERAL | Type : INT )
+
+- - Type  : ASSIGNMENT
+- - Specification : storearray
+
+- - - Type  : ARRAYLOAD
+- - - Specification : loadarray
+
+- - - - Type  : IDENTIFIER
+- - - - Specification : load
+- - - - Descriptor ( Name : a | Type : ARRAYINT )
+
+- - - - Type  : LITERAL
+- - - - Specification : 0
+- - - - Descriptor ( Name : LITERAL | Type : INT )
+
+- - - Type  : LITERAL
+- - - Specification : 1
+- - - Descriptor ( Name : LITERAL | Type : INT )
 
