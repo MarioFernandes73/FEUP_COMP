@@ -5,40 +5,27 @@ Specification : null
 - Type  : FUNCTION
 - Specification : main
 
-- - Type  : VARIABLEDECLARATION
-- - Specification : storearray
-- - Descriptor ( Name : a | Type : ARRAYINT )
+- - Type  : CALLEE
+- - Specification : teste
 
-- - - Type  : ARRAYDECLARATION
-- - - Specification : storearray
+- - - Type  : ARG
+- - - Specification : null
 
-- - - - Type  : LITERAL
-- - - - Specification : 0
-- - - - Descriptor ( Name : LITERAL | Type : INT )
+- - - - Type  : OPERATION
+- - - - Specification : *
 
-- - - - Type  : LITERAL
-- - - - Specification : 1
-- - - - Descriptor ( Name : LITERAL | Type : INT )
+- - - - - Type  : LITERAL
+- - - - - Specification : 5
+- - - - - Descriptor ( Name : LITERAL | Type : INT )
 
-- - - - Type  : LITERAL
-- - - - Specification : 2
-- - - - Descriptor ( Name : LITERAL | Type : INT )
+- - - - - Type  : LITERAL
+- - - - - Specification : 2
+- - - - - Descriptor ( Name : LITERAL | Type : INT )
 
-- - Type  : ASSIGNMENT
-- - Specification : storearray
+- Type  : FUNCTION
+- Specification : teste
 
-- - - Type  : ARRAYLOAD
-- - - Specification : loadarray
-
-- - - - Type  : IDENTIFIER
-- - - - Specification : load
-- - - - Descriptor ( Name : a | Type : ARRAYINT )
-
-- - - - Type  : LITERAL
-- - - - Specification : 0
-- - - - Descriptor ( Name : LITERAL | Type : INT )
-
-- - - Type  : LITERAL
-- - - Specification : 1
-- - - Descriptor ( Name : LITERAL | Type : INT )
+- - Type  : PARAM
+- - Specification : null
+- - Descriptor ( Name : a | Type : NOTASSIGNED )
 

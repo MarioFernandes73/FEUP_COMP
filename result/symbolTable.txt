@@ -3,6 +3,11 @@ Function
    Name : main
    Params : 
    Locals : 
-      Name : a   AND   Type : ARRAYINT
+   Return : void
+Function 
+   Name : teste
+   Params : 
+      Name : a   AND   Type : NOTASSIGNED
+   Locals : 
    Return : void
 

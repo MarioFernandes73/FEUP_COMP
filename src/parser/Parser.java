@@ -48,18 +48,15 @@ public class Parser
             analyzeBody(root, getHir());
         }
         catch (Exceptions.AssignmentException e) {
-            /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.TypeMismatchException e) {
-            /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.FunctionNameException e) {
-            /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
     }

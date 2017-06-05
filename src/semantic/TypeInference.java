@@ -150,9 +150,9 @@ public class TypeInference
             else if(node.getSpecification().equals("storearray"))
             {
                 Node firstNode = node.getAdj().get(0);
-                DataType dt = typeInferenceArray(firstNode);
 
                 if(node.getType() == JSONType.VARIABLEDECLARATION){
+                    DataType dt = typeInferenceArray(firstNode);
                     node.setDescriptorType(getDescriptionTypeArrays(dt));
                 }
                 else if(node.getType() == JSONType.ASSIGNMENT)
@@ -213,8 +213,6 @@ public class TypeInference
                 }
             }
         }
-
-        //TODO returns?
 
         ArrayList<Node> nodes = node.getAdj();
         for (Node n : nodes) {

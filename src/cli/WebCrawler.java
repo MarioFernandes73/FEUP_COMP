@@ -48,7 +48,6 @@ public class WebCrawler
      */
     public void parseJStoJson() throws UnsupportedEncodingException, FileNotFoundException, InterruptedException {
 
-        String errorReturn = "parse.html";
         String parsedCode = "";
         String website = "http://esprima.org/demo/parse.html";
 
@@ -77,19 +76,15 @@ public class WebCrawler
 
             , jsCode);
 
-
         sleep(1100);
 
         parsedCode = driver.findElement(By.id("aqui")).getText();
 
-        System.out.println(parsedCode);
-
-        if (parsedCode.equals(errorReturn)){
-            errorMessage = driver.findElement(By.id("info")).getText();
-        }
-        else{
+        if(parsedCode.contains("Error"))
+            errorMessage = parsedCode;
+        else
             jsonCode = parsedCode;
-        }
+
         driver.close();
     }
 

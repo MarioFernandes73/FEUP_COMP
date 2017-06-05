@@ -78,7 +78,7 @@ public class Interface
                 }
 
                 cg = new CodeGenerator(p.getHir(),p.getTables());
-                //cg.run();
+                cg.run();
 
                 errorsText.setText("Success!");
                 javaCodeText.setText(cg.getCode());
