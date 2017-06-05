@@ -91,7 +91,6 @@ public class TypeInference
             //arg is an expression
             if(node.getReference() == null && node.getAdj().size() != 0)
             {
-                System.out.println("entrou aqui");
                 //temp
                 node.setReference(new Descriptor("",DataType.NOTASSIGNED));
                 SemanticTypeInference(node,node.getAdj().get(0));
@@ -133,7 +132,7 @@ public class TypeInference
         else if(node.getSpecification() != null)
         {
             //assignments or variable declarations --> must analyse childs
-            if(node.getSpecification().equals("store") )
+            if(node.getSpecification().equals("store"))
             {
                 //childs
                 ArrayList<Node> nodes = node.getAdj();
@@ -149,9 +148,15 @@ public class TypeInference
                 SemanticTypeInference(node,firstNode);
                 return;
             }
+            //assignment a uma variavel
+            else if(node.getType() == JSONType.ASSIGNMENT)
+            {
+                ArrayList<Node> nodes = node.getAdj();
+                SemanticTypeInference(nodes.get(0),nodes.get(1));
+            }
             //loadarrays -> right or left side
             else if(node.getSpecification().equals("loadarray")){
-                DataType dt = typeInferenceArray(node);
+                DataType dt = typeInferenceArray(node); //verifica erros nos arrays
 
                 if(parent != null) {
                    parent.setDescriptorType(dt);
