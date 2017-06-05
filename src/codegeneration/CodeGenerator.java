@@ -92,6 +92,14 @@ public class CodeGenerator {
                 content += handleReturn(node.getAdj());
                 break;
             }
+            case CALLEE:{
+                content += handleCallee(node);
+                break;
+            }
+            case ARG:{
+                content += generate(node.getAdj().get(0));
+                break;
+            }
             default:
                 break;
         }
@@ -309,6 +317,20 @@ public class CodeGenerator {
             return "return " + generate(subnodes.get(0));
         else
             return "return void";
+    }
+
+    public String handleCallee(Node node){
+        String code = new String("");
+        code += node.getSpecification() + "(";
+
+        for(int i = 0; i < node.getAdj().size(); i++){
+            code += generate(node.getAdj().get(i));
+            if(i != node.getAdj().size() - 1)
+                code += ",";
+        }
+        code += ")";
+
+        return code;
     }
 
     public boolean isSingleLeftOperation(String operation){

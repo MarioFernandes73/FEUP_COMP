@@ -302,7 +302,7 @@ public class Parser
                     }
 
                     //literal : type(dataType), specification(data), specification(NULL)
-                    else if(value.equals("Literal") && nodeType != JSONType.RETURN &&  nodeType != JSONType.ARG)
+                    else if(value.equals("Literal"))
                     {
                         newNode = createNewNode(currentNode, JSONType.LITERAL, null, null);
                     }
@@ -322,12 +322,13 @@ public class Parser
                     //special cases that have identifiers but we'll use them on a different way : FUNCTION, PARAM and RETURN
                     //identifier : type(IDENTIFIER), specification(NULL), reference(variable name and type)
                     else if(value.equals("Identifier") &&
-                              !(nodeType == JSONType.RETURN || nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION ||
-                                  nodeType == JSONType.CALLEE || nodeType == JSONType.ARG))
+                              !(nodeType == JSONType.PARAM || nodeType == JSONType.FUNCTION ||
+                                  nodeType == JSONType.CALLEE))
                     {
 
                         if (!(nodeSpecification != null && ((nodeSpecification.equals("store") || nodeSpecification.equals("load")))
-                                && nodeReference == null) || nodeType == JSONType.WHILESTATEMENT || nodeType == JSONType.IFSTATEMENT) {
+                                && nodeReference == null) || nodeType == JSONType.WHILESTATEMENT || nodeType == JSONType.IFSTATEMENT ||
+                                nodeType == JSONType.RETURN || nodeType == JSONType.ARG) {
                             newNode = createNewNode(currentNode, JSONType.IDENTIFIER, "load", null);
                         }
                     }
