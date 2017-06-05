@@ -179,7 +179,10 @@ public class CodeGenerator {
         String code = new String("");
         int i = 0;
 
-        code += assignment.get(i).getReference().getName() + " " + node.getSpecification() + " ";
+        if(!node.getSpecification().equals("storearray"))
+            code += generate(assignment.get(i)) + " = ";
+        else
+            code += assignment.get(i).getReference().getName() + " " + node.getSpecification() + " ";
 
         i++;
 
