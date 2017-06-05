@@ -21,7 +21,7 @@ public class Resources
 		RETURN,					//function return
         LITERAL,
 		IDENTIFIER,				//descriptor	(load or loadarray)
-		VARIABLEDECLARATION,	//var a = b 	(store)  	
+		VARIABLEDECLARATION,	//var a = b 	(store)
 								//var a = [0,2] (storearray)
 		ASSIGNMENT,				//a = b			(store)
 								//a[i] = 2 		(storearray)
@@ -49,8 +49,7 @@ public class Resources
 			case ARRAYSTRING: return "String[]";
 			case ARRAYBOOLEAN: return "Boolean";
 			case BOOLEAN: return "Boolean[]";
+			default: return "Integer";
 		}
-
-		return "incognito";
 	}
 }

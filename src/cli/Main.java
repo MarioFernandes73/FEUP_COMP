@@ -29,5 +29,7 @@ public class Main {
         CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
         cg.run();
         System.out.println(cg.getCode());
+
+        cg.printSymbolTable(p.getTables());
     }
 }

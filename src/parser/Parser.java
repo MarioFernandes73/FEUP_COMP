@@ -222,11 +222,12 @@ public class Parser
                     }*/
 
                     //local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
-                    else if(value.equals("VariableDeclaration"))
+                    else if(value.equals("VariableDeclaration") || value.equals("VariableDeclarator"))
                     {
                         //create new Node
                         newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
                     }
+
                     else if(key.equals("name") && nodeType == JSONType.VARIABLEDECLARATION && nodeReference == null)
                     {
                         //create descriptor, add to node and to SymbolTable

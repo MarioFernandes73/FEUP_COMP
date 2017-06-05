@@ -150,15 +150,16 @@ public class CodeGenerator {
 
         //Multiple declarations in line
         if(node.getAdj().size() > 0 && node.getAdj().get(0).getType() == JSONType.VARIABLEDECLARATION){
-            for(Node n : node.getAdj()){
-                System.out.println(n.getReference() + n.getSpecification() + n.getType());
+            for(int i = 0; i < node.getAdj().size();i++){
+                Node n = node.getAdj().get(i);
 
-                if(firstDeclaration){
-                    firstDeclaration = false;
-                    code += getType(n) + " ";
-                }
-                else code += ", ";
-                code += generate(n);
+                code += Resources.DataTypeToString(n.getReference().getType()) + " " + n.getReference().getName();
+
+                for(Node n2 : n.getAdj())
+                    code += " = " + generate(n2);
+
+                if(i != node.getAdj().size()-1)
+                    code += ";\n" + spacement;
             }
         }
         //Individual declaration
@@ -181,13 +182,6 @@ public class CodeGenerator {
         code += assignment.get(i).getReference().getName() + " " + node.getSpecification() + " ";
 
         i++;
-
-
-        if(node.getSpecification().equals("storearray")){
-            /*
-            Tratar de arrays
-             */
-        }
 
         while(i < node.getAdj().size()){
             code += generate(node.getAdj().get(i));
