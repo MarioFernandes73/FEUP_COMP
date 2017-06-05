@@ -3,6 +3,5 @@ Function
    Name : teste
    Params : 
    Locals : 
-      Name : a   AND   Type : INT
    Return : void
 

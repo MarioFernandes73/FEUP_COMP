@@ -1,5 +1,9 @@
 package cli;
 
+import codegeneration.CodeGenerator;
+import parser.Parser;
+import semantic.TypeInference;
+
 /**
  * Copyright 2017 SPeCS.
  * 
@@ -17,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        /*
+
     	Parser p = new Parser("test.json");
     	p.run();
 
@@ -27,7 +31,7 @@ public class Main {
         CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
         cg.run();
         System.out.println(cg.getCode());
-        */
+
 
         /*System.out.println("\n------- START PRINTING HIR -------");
         printHIR(p.getHir(),"");

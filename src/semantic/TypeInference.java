@@ -295,8 +295,9 @@ public class TypeInference
         if(dtLeft == DataType.NOTASSIGNED){
             throw new Exceptions.InitializationException("resolver");
         }
-        //- / * only allowed for numbers
-        if((op.equals("/") || op.equals("-") || op.equals("*")) && !(dtLeft == DataType.INT || dtLeft == DataType.DOUBLE)) {
+        //- / * ++ -- only allowed for numbers
+        System.out.println("aqui : "+op);
+        if((op.equals("/") || op.equals("-") || op.equals("*") || op.equals("++") || op.equals("--")) && !(dtLeft == DataType.INT || dtLeft == DataType.DOUBLE)) {
             throw new Exceptions.InvalidOperationException();
         }
         // + not allowed for booleans

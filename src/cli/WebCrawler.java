@@ -87,13 +87,15 @@ public class WebCrawler
         parsedCode = parsedCode.replace(" ", "");
         parsedCode = parsedCode.replace("http://esprima.org/demo/", "");
 
+        System.out.println(parsedCode);
+
         if (parsedCode.equals(errorReturn)){
             errorMessage = driver.findElement(By.id("info")).getText();
         }
-
+        else{
+            jsonCode = parsedCode;
+        }
         driver.close();
-
-       jsonCode = parsedCode;
     }
 
     public String getJsonCode() {
@@ -103,4 +105,5 @@ public class WebCrawler
     public String getErrorMessage(){
         return errorMessage;
     }
+
 }

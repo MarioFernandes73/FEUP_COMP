@@ -2,9 +2,10 @@ package parser;
 
 import cli.Resources;
 import cli.Resources.JSONType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import semantic.Exceptions;
 
 import java.io.*;
@@ -26,8 +27,18 @@ public class Parser
     {
         //File json = new File(jsonCode);
         //jsonCode = read(json);
+        System.out.println(jsonCode);
 
-        JsonElement jelement = new JsonParser().parse(jsonCode);
+        //Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                      .disableHtmlEscaping()
+                      .setLenient()
+                      .create();
+        //gson.setCharacterEncoding("UTF8");
+        JsonElement jelement = gson.fromJson (jsonCode, JsonElement.class);
+
+        //JsonElement jelement = new JsonParser().parse(jsonCode);
+
 
         root = jelement.getAsJsonObject();
         setHir(new Node(JSONType.START));

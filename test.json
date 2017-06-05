@@ -2,126 +2,22 @@
   "type": "Program",
   "body": [
     {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "first"
-      },
-      "params": [],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-                  "type": "Literal",
-                  "value": "ola",
-                  "raw": "\"ola\""
-                }
-              }
-            ],
-            "kind": "var"
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "a"
           },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "CallExpression",
-              "callee": {
-                "type": "Identifier",
-                "name": "second"
-              },
-              "arguments": [
-                {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                {
-                  "type": "Literal",
-                  "value": 5,
-                  "raw": "5"
-                }
-              ]
-            }
+          "init": {
+            "type": "Literal",
+            "value": "ola",
+            "raw": "\"ola\""
           }
-        ]
-      },
-      "generator": false,
-      "expression": false
-    },
-    {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "third"
-      },
-      "params": [],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Literal",
-              "value": 5,
-              "raw": "5"
-            }
-          }
-        ]
-      },
-      "generator": false,
-      "expression": false
-    },
-    {
-      "type": "FunctionDeclaration",
-      "id": {
-        "type": "Identifier",
-        "name": "second"
-      },
-      "params": [
-        {
-          "type": "Identifier",
-          "name": "a"
-        },
-        {
-          "type": "Identifier",
-          "name": "b"
         }
       ],
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "c"
-                },
-                "init": {
-                  "type": "CallExpression",
-                  "callee": {
-                    "type": "Identifier",
-                    "name": "third"
-                  },
-                  "arguments": []
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ]
-      },
-      "generator": false,
-      "expression": false
+      "kind": "var"
     }
   ],
   "sourceType": "script"
