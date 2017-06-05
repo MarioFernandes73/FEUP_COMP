@@ -7,12 +7,13 @@ Geração de Código
 
 * Sem parâmetros
 * Com parâmetros de número variável
-* FALTA: returns de outros JSONType
+* returns
 
 ####  Declaration
 
 * Múltiplas declarações
 * Declarações com variáveis sem ser arrays
+* FALTA: inferência em caso de declarações múltiplas
 
 #### Assignment
 
@@ -36,10 +37,9 @@ Geração de Código
 ### CALLEE
 
 * nome da função
-* FALTA: argumentos poderem ser expressões e outros JSONType
+* argumentos;
+* FALTA: return dessas funções
 
 ### Falta
 * verificar com arrays em geral 
 * verificar com arrays de várias dimensões
-* return pode aparecer em diversas ocasiões
-* código ser só o corpo de uma função (neste caso inseri-lo dentro de um main)
