@@ -49,6 +49,10 @@ public class Interface
             public void actionPerformed(final ActionEvent e)
             {
                 String errorMessages;
+                errorsText.setText("");
+                javaCodeText.setText("");
+                hirText.setText("");
+                stText.setText("");
 
                 wc = new WebCrawler(textAreaJSCode.getText());
                 wc.run();
@@ -93,6 +97,7 @@ public class Interface
                 //writeInFile("output.java",cg.getCode());
                 writeInFile("hir.txt",cg.printHIR(p.getHir(),""));
                 writeInFile("symbolTable.txt",cg.printSymbolTable(p.getTables()));
+                writeInFile("Main.java",cg.printSymbolTable(p.getTables()));
             }
 
             private void writeInFile(final String filename, final String code)

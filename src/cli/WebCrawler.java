@@ -51,7 +51,7 @@ public class WebCrawler
         String parsedCode = "";
         String website = "http://esprima.org/demo/parse.html";
 
-        File chromeDriver = new File("chromedriver.exe");
+        File chromeDriver = new File("src/chromedriver.exe");
 
         if (!chromeDriver.exists()){
             throw new FileNotFoundException("Web driver não encontrada.");

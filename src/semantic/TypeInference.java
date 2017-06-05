@@ -155,8 +155,13 @@ public class TypeInference
                 //temp
                 node.setReference(new Descriptor("",DataType.NOTASSIGNED));
                 SemanticTypeInference(node,nodes.get(0));
-                SemanticTypeInference(node,nodes.get(1));
+
+                if(nodes.get(0).equals("load"))
+                    SemanticTypeInference(nodes.get(0),nodes.get(1));
+                else
+                    SemanticTypeInference(node,nodes.get(1));
                 node.setReference(null);
+                return;
             }
             //loadarrays -> right or left side
             else if(node.getSpecification().equals("loadarray")){
@@ -193,9 +198,6 @@ public class TypeInference
             else if(parent != null) {
                 parent.setDescriptorType(node.getDescriptorType());
             }
-        }
-        else{
-            System.out.println("-->parou uma coisa aqui<--");
         }
 
         //recursive call
