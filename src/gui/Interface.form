@@ -140,7 +140,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value=""/>
+          <text value="function main(){ }"/>
         </properties>
       </component>
       <component id="3afe8" class="javax.swing.JButton" binding="infoButton" default-binding="true">

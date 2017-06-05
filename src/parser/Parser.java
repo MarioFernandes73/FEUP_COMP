@@ -37,8 +37,6 @@ public class Parser
         //gson.setCharacterEncoding("UTF8");
         JsonElement jelement = gson.fromJson (jsonCode, JsonElement.class);
 
-        //JsonElement jelement = new JsonParser().parse(jsonCode);
-
         root = jelement.getAsJsonObject();
         setHir(new Node(JSONType.START));
         errorMessage = null;

@@ -25,41 +25,42 @@ public class TypeInference
     public void run(){
         try
         {
-            SemanticTypeInference(hir);
+            SemanticTypeInference(null,hir);
             verifyCalleeArgsRetType(hir);
         }
         catch (Exceptions.TypeMismatchException e) {
-            /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InitializationException e) {
-            /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidOperationException e) {
-             /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidReturnTypeException e) {
             System.err.println(e.getMessage());
-            System.exit(1);
+            e.printStackTrace();
+            errorMessage = e.getMessage();
         }
         catch (Exceptions.FunctionNameException e) {
-             /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
         catch (Exceptions.InvalidNumArgsException e) {
-             /*System.err.println(e.getMessage());
-            System.exit(1);*/
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             errorMessage = e.getMessage();
         }
     }
 
-    private void SemanticTypeInference(Node node)
+    private void SemanticTypeInference(Node parent, Node node)
       throws
       Exceptions.TypeMismatchException,
         Exceptions.InvalidOperationException,
@@ -67,6 +68,7 @@ public class TypeInference
         Exceptions.InvalidReturnTypeException,
         Exceptions.FunctionNameException, Exceptions.InvalidNumArgsException
     {
+
         if(node.getType() == JSONType.FUNCTION){
             changeCurrentTable(node.getSpecification());
         }
@@ -83,50 +85,16 @@ public class TypeInference
             ArrayList<Node> nodes = node.getAdj();
             if(nodes.size() != st.getNumArgs())
                 throw new Exceptions.InvalidNumArgsException(node.getSpecification());
-        }
-        //if not null reference, must interpret its childs --> type inference
-        else if (node.getSpecification() != null && node.getSpecification().contains("store"))
-        {
-            //childs
-            ArrayList<Node> nodes = node.getAdj();
 
-            //no childs -> end
-            if(nodes.size() == 0)
-                return;
-
-            //analyse first child
-            Node firstNode = nodes.get(0);
-
-            //my child is an operation
-            if(nodes.get(0).getType() == JSONType.OPERATION) {
-                DataType dt = typeInferenceOp(firstNode);
-                node.setDescriptorType(dt);
-            }
-            //if arrays
-            else if(firstNode.getSpecification().equals("loadarray")){
-                DataType dt = typeInferenceArray(firstNode);
-                System.out.println("-1 - "+dt);
-                node.setDescriptorType(dt);
-            }
-            else if(node.getSpecification().equals("storearray")){
-                DataType dt = typeInferenceArray(firstNode);
-                node.setDescriptorType(getDescriptionTypeArrays(dt));
-            }
-            //callees
-            else if(firstNode.getType() == JSONType.CALLEE){
-                SymbolTable st = getSymbolTable(firstNode.getSpecification());
-
+            if(parent != null){
                 DataType dt = st.getFunctionReturn();
                 node.setDescriptorType(dt);
+                return;
             }
-            //identifiers and literals
-            else {
-                node.setDescriptorType(firstNode.getDescriptorType());
-            }
-            return;
         }
         //return type
-        else if(node.getType() == JSONType.RETURN){
+        else if(node.getType() == JSONType.RETURN)
+        {
             DataType dt1 = node.getDescriptorType();
             DataType dt2 = currentTable.getFunctionReturn();
             //different return type
@@ -135,11 +103,70 @@ public class TypeInference
                 else throw new Exceptions.InvalidReturnTypeException(currentTable.getFunctionName());
             }
         }
+        //operations
+        else if(node.getType() == JSONType.OPERATION) {
+            System.out.println("OPERADOR");
+            DataType dt = typeInferenceOp(node);
+
+            if(parent != null){
+                parent.setDescriptorType(dt);
+                return;
+            }
+        }
+       //others
+        else if(node.getSpecification() != null)
+        {
+            //assignments or variable declarations --> must analyse childs
+            if(node.getSpecification() == "store")
+            {
+                System.out.println("e store");
+                //childs
+                ArrayList<Node> nodes = node.getAdj();
+
+                //no childs -> end
+                if(nodes.size() == 0)
+                    return;
+
+                //analyse first child
+                Node firstNode = nodes.get(0);
+
+                System.out.println("vai para o backtracking");
+                //semantic inference to sons
+                SemanticTypeInference(node,firstNode);
+                return;
+            }
+            //loadarrays -> right or left side
+            else if(node.getSpecification().equals("loadarray")){
+                DataType dt = typeInferenceArray(node);
+
+                //right side ? //TODO COMPOR
+                if(parent != null){
+                    parent.setDescriptorType(dt);
+                    return;
+                }
+            }
+            //store arrays
+            else if(node.getSpecification().equals("storearray")){
+                DataType dt = typeInferenceArray(node);
+
+                if(parent != null){
+                    parent.setDescriptorType(getDescriptionTypeArrays(dt));
+                    return;
+                }
+            }
+            //identifiers and literals assignments to parents
+            else if(parent != null) {
+                parent.setDescriptorType(node.getDescriptorType());
+            }
+        }
+        else{
+            System.out.println("-->parou uma coisa aqui<--");
+        }
 
         //recursive call
         ArrayList<Node> nodes = node.getAdj();
         for (Node n : nodes) {
-            SemanticTypeInference(n);
+            SemanticTypeInference(null,n);
         }
     }
 
@@ -304,6 +331,10 @@ public class TypeInference
         if(op.equals("+") && (dtLeft == DataType.BOOLEAN )) {
             throw new Exceptions.InvalidOperationException();
         }
+
+        //operadores unários
+        if(op.equals("++") || op.equals("--"))
+            return dtLeft;
 
         DataType dtRight = dataTypes.get(1);
 

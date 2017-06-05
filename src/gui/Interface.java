@@ -13,9 +13,6 @@ import java.awt.event.MouseAdapter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Created by gomes on 03/06/2017.
- */
 public class Interface
 {
     private JPanel             panel1;
@@ -67,7 +64,7 @@ public class Interface
                 errorMessages = p.getErrorMessage();
                 if(errorMessages != null)
                 {
-                    errorsText.setText("Semantic error :\n\n"+errorMessages);
+                    errorsText.setText("Semantic error :\n"+errorMessages);
                     return;
                 }
 
