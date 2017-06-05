@@ -26,7 +26,7 @@ public class TypeInference
         try
         {
             SemanticTypeInference(null,hir);
-            verifyCalleeArgsRetType(hir);
+            verifyCalleeArgsType(hir);
         }
         catch (Exceptions.TypeMismatchException e) {
             e.printStackTrace();
@@ -89,6 +89,14 @@ public class TypeInference
         //return type
         else if(node.getType() == JSONType.RETURN)
         {
+            boolean temp = false;
+            if(node.getSpecification() == null)
+            {
+                //temp
+                temp = true;
+                node.setReference(new Descriptor("",DataType.NOTASSIGNED));
+                SemanticTypeInference(node,node.getAdj().get(0));
+            }
             DataType dt1 = node.getDescriptorType();
             DataType dt2 = currentTable.getFunctionReturn();
             //different return type
@@ -96,6 +104,9 @@ public class TypeInference
                 if(dt2 == DataType.NOTASSIGNED) currentTable.setFunctionReturn(dt1);
                 else throw new Exceptions.InvalidReturnTypeException(currentTable.getFunctionName());
             }
+
+            if(temp)
+                node.setReference(null);
         }
         //operations
         else if(node.getType() == JSONType.OPERATION) {
@@ -130,7 +141,6 @@ public class TypeInference
             else if(node.getSpecification().equals("loadarray")){
                 DataType dt = typeInferenceArray(node);
 
-                //right side ? //TODO COMPOR
                 if(parent != null) {
                    parent.setDescriptorType(dt);
                    return;
@@ -179,7 +189,7 @@ public class TypeInference
      * Executed after type inference.
      * @param node
      */
-    private void verifyCalleeArgsRetType(final Node node) throws Exceptions.TypeMismatchException
+    private void verifyCalleeArgsType(final Node node) throws Exceptions.TypeMismatchException
     {
         if(node.getType() == JSONType.CALLEE)
         {
@@ -204,9 +214,11 @@ public class TypeInference
             }
         }
 
+        //TODO returns?
+
         ArrayList<Node> nodes = node.getAdj();
         for (Node n : nodes) {
-            verifyCalleeArgsRetType(n);
+            verifyCalleeArgsType(n);
         }
     }
 
@@ -335,7 +347,7 @@ public class TypeInference
         }
 
         //operadores unários
-        if(op.equals("++") || op.equals("--"))
+        if(dataTypes.size() == 1)
             return dtLeft;
 
         DataType dtRight = dataTypes.get(1);
