@@ -222,7 +222,7 @@ public class Parser
                     }*/
 
                     //local variable : type(VARIABLEDECLARATION), specification(NULL), reference(var name and DataType)
-                    else if(value.equals("VariableDeclaration") || value.equals("VariableDeclarator"))
+                    else if(value.equals("VariableDeclarator"))
                     {
                         //create new Node
                         newNode = createNewNode(currentNode, JSONType.VARIABLEDECLARATION, "store", null);
