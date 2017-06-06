@@ -153,7 +153,8 @@ public class TypeInference
             {
                 ArrayList<Node> nodes = node.getAdj();
 
-                if(!nodes.get(0).equals("load")){
+                if(!nodes.get(0).getSpecification().equals("load"))
+                {
                     nodes.get(0).setReference(new Descriptor("",DataType.NOTASSIGNED));
                 }
                 SemanticTypeInference(nodes.get(0),nodes.get(1));

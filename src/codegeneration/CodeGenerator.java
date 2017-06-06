@@ -173,10 +173,6 @@ public class CodeGenerator {
     public String handleCallee(Node node){
         String code = new String("");
 
-        code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
-
-        //If direct assignment
-
         //function
         code += node.getSpecification() + "(";
 
@@ -315,7 +311,7 @@ public class CodeGenerator {
 
         //while
         code += "\n" + spacement + "while(" + generate(subnodes.get(0)) + ")\n" +
-                spacement +  "{\n";
+                  spacement +  "{\n";
 
         spacement += Resources.DEF_SPC;
 
@@ -334,7 +330,7 @@ public class CodeGenerator {
 
         //do
         code += "\n" + spacement + "do\n" +
-                spacement +  "{\n";
+                  spacement +  "{\n";
 
         spacement += Resources.DEF_SPC;
 
@@ -353,10 +349,10 @@ public class CodeGenerator {
     public String handleFor(ArrayList<Node> subnodes){
         String code = new String("");
         code += "\n" + spacement + "for(" +           //for
-                generate(subnodes.get(0)) + " ; " +   //init
-                generate(subnodes.get(1)) + " ; " +   //test
-                generate(subnodes.get(2)) + ")\n" +   //inc
-                spacement +  "{\n";
+                  generate(subnodes.get(0)) + " ; " +   //init
+                  generate(subnodes.get(1)) + " ; " +   //test
+                  generate(subnodes.get(2)) + ")\n" +   //inc
+                  spacement +  "{\n";
 
         spacement += Resources.DEF_SPC;
 
@@ -393,7 +389,7 @@ public class CodeGenerator {
 
     public String endPunctuation(JSONType type){
         if(!(type.equals(JSONType.IFSTATEMENT) || type.equals(JSONType.WHILESTATEMENT) ||
-            type.equals(JSONType.DOWHILESTATEMENT) || type.equals(JSONType.FORSTATEMENT)))
+               type.equals(JSONType.DOWHILESTATEMENT) || type.equals(JSONType.FORSTATEMENT)))
             return ";";
         else
             return "";
