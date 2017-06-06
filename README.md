@@ -8,11 +8,9 @@ NAME2: Inês Gomes, NR2: 201405778, GRADE2: 20, CONTRIBUTION2: 34%
 
 NAME3: Mário Fernandes, NR3: 201201705, GRADE3: 20, CONTRIBUTION3: 33%
  
-**SUMMARY:** O trabalho aqui apresentado é uma ferramenta que recebe uma secção restrita do universo de JavaScript e transforma num pedaço de código de Java, alertando o utilizador para eventuais erros semânticos que estará a introduzir. Para tal o utilizador apenas terá de inserir o seu código JavaScript. A ferramenta acede ao site "Esprima" por meio de um web crawler, insere o código digitado e recebe uma AST em JSON do mesmo. O trabalho desenvolvido está dividido em 3 partes: 
-
-  * construção de uma HIR (high-level intermediate representation) e duma Symbol Table de descritores; 
-  * inferência de tipos e verificações semânticas;
-  * geração de código.
+**SUMMARY:** O trabalho aqui apresentado é uma ferramenta que recebe uma secção restrita do universo de JavaScript e transforma num pedaço de código de Java, 
+alertando o utilizador para eventuais erros semânticos que estará a introduzir. Para tal o utilizador apenas terá de inserir o seu código JavaScript. 
+A ferramenta acede ao site "Esprima" por meio de um web crawler, insere o código digitado e recebe uma AST em JSON do mesmo. 
   
 Esta ferramenta implica que o código javascript esteja em funções para a contrução das Symbol Tables. A secção de código de javascript que pode ser testada inclui:
 
@@ -24,25 +22,64 @@ Esta ferramenta implica que o código javascript esteja em funções para a cont
  * ciclos (while, do while, for);
  * arrays de várias dimensões.
  
+ 
 **EXECUTE:** (indicate how to run your tool)
  
-**DEALING WITH SYNTACTIC ERRORS: ** O facto de dependermos de uma terceira ferramenta para a conversão, que neste caso é o Esprima, implica usar o tratamento de erros sintáticos que o "Esprima" utilizada. Neste caso o "Esprima" não tolera erros sintáticos, pelo que, se o utilizador digitar um texto com erros, o "Esprima" devolve uma mensagem de erro que mostramos ao utilizador. A partir daqui, o programa fica à espera de um novo input, sem processar o anterior.
+**DEALING WITH SYNTACTIC ERRORS: ** O facto de dependermos de uma terceira ferramenta para a conversão, que neste caso é o Esprima, implica usar o tratamento 
+de erros sintáticos que o "Esprima" utilizada. Neste caso o "Esprima" não tolera erros sintáticos, pelo que, se o utilizador digitar um texto com erros, o 
+"Esprima" devolve uma mensagem de erro que mostramos ao utilizador. A partir daqui, o programa fica à espera de um novo input, sem processar o anterior.
  
 **SEMANTIC ANALYSIS:** Durante a interpretação da AST e inferência de tipos é possível encontrar diversos erros semânticos, como por exemplo:
 
  * variáveis não inicializadas;
- * 
+ * variáveis inicializas com um tipo e que recebem outro;
+ * operações entre tipos inválidas;
+ * chamada de funções inexistentes;
+ * chamada de funções com argumentos errados (numero e tipo);
+ * tipo de retorno errado; 
  
-**INTERMEDIATE REPRESENTATIONS (IRs):** (for example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR with structure different from the HLIR)
+**INTERMEDIATE REPRESENTATIONS (IRs):** Para este trabalho foi necessária a construção de uma HIR. Esta HIR apresenta uma estrutura semelhante à apresentada nas aulas teóricas. 
+Para esta representação é usada a classe "Node", que tem um tipo (JSONType), especificação (e.g. se é um operador +,-,/,* ou o valor do literal), e uma referência para um descritor
+da tabela de simbolos, caso haja essa relação. Um "Node" tem ainda um conjunto de nós adjacentes que serão os seus filhos. 
+Existe um nó inicial, chamado START que tem como filhos diretos as FUNCTIONS. A partir daí, todos os nós terão um dos tipos do enum JSONType. Stores e loads são identificados através 
+da especificação do nó. 
  
 **CODE GENERATION:** (when applicable, describe how the code generation of your tool works and identify the possible problems your tool has regarding code generation.)
  
-**OVERVIEW:** (refer the approach used in your tool, the main algorithms, the third-party tools and/or packages, etc.)
+**OVERVIEW:** O trabalho desenvolvido está dividido em 4 partes: 
+
+  * obtenção da AST em JSON do código Javascript;
+  * construção de uma HIR (high-level intermediate representation) e duma Symbol Table de descritores; 
+  * inferência de tipos e verificações semânticas;
+  * geração de código.
+  
+Para a 1ª parte, foi usada a biblioteca "Selenium" que consiste num WebDriver que permite aceder ao website da ferramenta "Esprima" e manipular a página de modo
+a obter a AST gerada. 
+Para a 2º parte, foi usada a biblioteca GSON para simplificar a leitura do JSON gerado pela AST. 
+Tanto para a construção do parser como para a geração do código e inferência de tipos é usado backtracking para percorrer a àrvore.
  
-**TESTSUITE AND TEST INFRASTRUCTURE:** (Describe the content of your testsuite regarding the number of examples, the approach to automate the test, etc.)
+**TESTSUITE AND TEST INFRASTRUCTURE:** Para a execução dos nossos testes é necessário correr a aplicação e copiar o conteúdo dos ficheiros .txt para a ferramenta
+e clicar "Convert". Para analisar melhor os resultados é possível criar ficheiros .txt com os resultados da HIR, Symbol Table e do código Java que irão aparecer
+na pasta "results".
  
-**TASK DISTRIBUTION:** (Identify the set of tasks done by each member of the project.)
+**TASK DISTRIBUTION:**
+
+Catarina Ramos:
+Geração de código
+Tratamento de alguns erros
+
+Inês Gomes:
+Interface e integração com webcrawler
+Parser (HIR + Symbol Table)
+
+Mário Fernandes:
+Inferência de tipos
+Tratamento de alguns erros
+
+**PROS:**
+A ferramenta é simples e intuitiva de usar devido à sua interface.
+Existe a opção de poder analisar a HIR gerada correspondente ao código, os possíveis erros semânticos/sintáticos associados, a tabela de simbolos gerada incluíndo a inferência de tipos e ainda a geração de código na linguagem Java.
+O utilizador ainda tem a possibilidade de poder guardar este código. 
  
-**PROS:** (Identify the most positive aspects of your tool)
- 
-**CONS:** (Identify the most negative aspects of your tool)
+**CONS:**
+Esta ferramenta é limitada pois não cobre muitas das funcionalidades e métodos da linguagem de javascript.
