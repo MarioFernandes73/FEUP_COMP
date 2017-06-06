@@ -1,6 +1,6 @@
 **PROJECT TITLE:** JS2JAVA
 
-**GROUP: ** G18
+**GROUP:** G18
 
 NAME1: Catarina Ramos, NR1: 201406219, GRADE1: 20, CONTRIBUTION1: 33%
 
@@ -8,7 +8,7 @@ NAME2: Inês Gomes, NR2: 201405778, GRADE2: 20, CONTRIBUTION2: 34%
 
 NAME2: Mário Fernandes, NR2: 201201705, GRADE2: 20, CONTRIBUTION2: 33%
  
-** SUMMARY:** O trabalho aqui apresentado é uma ferramenta que recebe uma secção restrita do universo de JavaScript e transforma num pedaço de código de Java, alertando o utilizador para eventuais erros semânticos que estará a introduzir. Para tal o utilizador apenas terá de inserir o seu código JavaScript. A ferramenta acede ao site "Esprima" por meio de um web crawler, insere o código digitado e recebe uma AST em JSON do mesmo. O trabalho desenvolvido está dividido em 3 partes: 
+**SUMMARY:** O trabalho aqui apresentado é uma ferramenta que recebe uma secção restrita do universo de JavaScript e transforma num pedaço de código de Java, alertando o utilizador para eventuais erros semânticos que estará a introduzir. Para tal o utilizador apenas terá de inserir o seu código JavaScript. A ferramenta acede ao site "Esprima" por meio de um web crawler, insere o código digitado e recebe uma AST em JSON do mesmo. O trabalho desenvolvido está dividido em 3 partes: 
 
   * construção de uma HIR (high-level intermediate representation) e duma Symbol Table de descritores; 
   * inferência de tipos e verificações semânticas;
@@ -24,22 +24,22 @@ Esta ferramenta usa implica que o código javascript esteja em funções para a 
  * ciclos (while, do while, for);
  * arrays de várias dimensões.
  
-** EXECUTE:** (indicate how to run your tool)
+**EXECUTE:** (indicate how to run your tool)
  
 **DEALING WITH SYNTACTIC ERRORS: ** O facto de dependermos de uma terceira ferramenta para a conversão, que neste caso é o Esprima, implica dependermos da mesma. O Esprima não tolera erros sintáticos, pelo que se o utilizador digitar um texto com erros, o Esprima devolve uma mensagem de erro que mostramos ao utilizador. A partir daqui, o programa fica à espera de um novo input, sem processar o anterior.
  
 **SEMANTIC ANALYSIS:** 
  
-**INTERMEDIATE REPRESENTATIONS (IRs): (for example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR with structure different from the HLIR)
+**INTERMEDIATE REPRESENTATIONS (IRs):** (for example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR with structure different from the HLIR)
  
-**CODE GENERATION: (when applicable, describe how the code generation of your tool works and identify the possible problems your tool has regarding code generation.)
+**CODE GENERATION:** (when applicable, describe how the code generation of your tool works and identify the possible problems your tool has regarding code generation.)
  
-**OVERVIEW: (refer the approach used in your tool, the main algorithms, the third-party tools and/or packages, etc.)
+**OVERVIEW:** (refer the approach used in your tool, the main algorithms, the third-party tools and/or packages, etc.)
  
-**TESTSUITE AND TEST INFRASTRUCTURE: (Describe the content of your testsuite regarding the number of examples, the approach to automate the test, etc.)
+**TESTSUITE AND TEST INFRASTRUCTURE:** (Describe the content of your testsuite regarding the number of examples, the approach to automate the test, etc.)
  
-**TASK DISTRIBUTION: (Identify the set of tasks done by each member of the project.)
+**TASK DISTRIBUTION:** (Identify the set of tasks done by each member of the project.)
  
-**PROS: (Identify the most positive aspects of your tool)
+**PROS:** (Identify the most positive aspects of your tool)
  
-**CONS: (Identify the most negative aspects of your tool)
+**CONS:** (Identify the most negative aspects of your tool)
