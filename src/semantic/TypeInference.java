@@ -152,15 +152,11 @@ public class TypeInference
             else if(node.getType() == JSONType.ASSIGNMENT)
             {
                 ArrayList<Node> nodes = node.getAdj();
-                //temp
-                node.setReference(new Descriptor("",DataType.NOTASSIGNED));
-                SemanticTypeInference(node,nodes.get(0));
 
-                if(nodes.get(0).equals("load"))
-                    SemanticTypeInference(nodes.get(0),nodes.get(1));
-                else
-                    SemanticTypeInference(node,nodes.get(1));
-                node.setReference(null);
+                if(!nodes.get(0).equals("load")){
+                    nodes.get(0).setReference(new Descriptor("",DataType.NOTASSIGNED));
+                }
+                SemanticTypeInference(nodes.get(0),nodes.get(1));
                 return;
             }
             //loadarrays -> right or left side
