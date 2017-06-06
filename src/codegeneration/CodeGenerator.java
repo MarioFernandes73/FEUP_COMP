@@ -11,8 +11,6 @@ import java.util.ArrayList;
 
 public class CodeGenerator {
     private String                 code      = null;
-    private String                 filename  = null;
-    private String                 filepath  = null;
     private Node                   hir       = null;
     private ArrayList<SymbolTable> st        = null;
     private String                 spacement = null;
@@ -40,52 +38,11 @@ public class CodeGenerator {
                     content += generate(n) + "\n";
                 break;
             }
+            /*
+            FUNCTION RELATED
+             */
             case FUNCTION:{
                 content += handleFunction(node.getSpecification(),node.getAdj());
-                break;
-            }
-            case VARIABLEDECLARATION:{
-                content += handleVariableDeclaration(node);
-                break;
-            }
-            case ASSIGNMENT:{
-                content += handleAssignment(node,node.getAdj());
-                break;
-            }
-            case IDENTIFIER:{
-                content += node.getReference().getName();
-                break;
-            }
-            case LITERAL:{
-                content += node.getSpecification();
-                break;
-            }
-            case OPERATION:{
-                content += handleOperation(node,node.getAdj());
-                break;
-            }
-            case IFSTATEMENT:{
-                content += handleIf(node.getAdj());
-                break;
-            }
-            case WHILESTATEMENT:{
-                content += handleWhile(node.getAdj());
-                break;
-            }
-            case DOWHILESTATEMENT:{
-                content += handleDoWhile(node.getAdj());
-                break;
-            }
-            case FORSTATEMENT:{
-                content += handleFor(node.getAdj());
-                break;
-            }
-            case ARRAYLOAD:{
-                content += handleArray(node.getAdj());
-                break;
-            }
-            case ARRAYDECLARATION:{
-                content += handleArrayContent(node.getAdj());
                 break;
             }
             case RETURN:{
@@ -100,6 +57,65 @@ public class CodeGenerator {
                 content += generate(node.getAdj().get(0));
                 break;
             }
+            /*
+            INIT AND ASSIGN
+             */
+            case VARIABLEDECLARATION:{
+                content += handleVariableDeclaration(node);
+                break;
+            }
+            case ASSIGNMENT:{
+                content += handleAssignment(node,node.getAdj());
+                break;
+            }
+            /*
+            VARIABLES
+             */
+            case IDENTIFIER:{
+                content += node.getReference().getName();
+                break;
+            }
+            case LITERAL:{
+                content += node.getSpecification();
+                break;
+            }
+            case ARRAYLOAD:{
+                content += handleArray(node.getAdj());
+                break;
+            }
+            case ARRAYDECLARATION:{
+                content += handleArrayContent(node.getAdj());
+                break;
+            }
+            /*
+            OPERATIONS = EXPRESSIONS
+             */
+            case OPERATION:{
+                content += handleOperation(node,node.getAdj());
+                break;
+            }
+            /*
+            CONDITIONS
+             */
+            case IFSTATEMENT:{
+                content += handleIf(node.getAdj());
+                break;
+            }
+            /*
+            LOOPS
+             */
+            case WHILESTATEMENT:{
+                content += handleWhile(node.getAdj());
+                break;
+            }
+            case DOWHILESTATEMENT:{
+                content += handleDoWhile(node.getAdj());
+                break;
+            }
+            case FORSTATEMENT:{
+                content += handleFor(node.getAdj());
+                break;
+            }
             default:
                 break;
         }
@@ -107,6 +123,9 @@ public class CodeGenerator {
         return content;
     }
 
+    /*
+    FUNCTION RELATED
+     */
     private String handleFunction(String name,ArrayList<Node> children){
         boolean lastParam = false, firstParam = true;
 
@@ -143,14 +162,41 @@ public class CodeGenerator {
         return code;
     }
 
-    private String handleVariableDeclaration(Node node){
-        boolean firstDeclaration = true;
+    public String handleReturn(ArrayList<Node> subnodes){
 
+        if(subnodes.size() > 0)
+            return "return " + generate(subnodes.get(0));
+        else
+            return "return null";
+    }
+
+    public String handleCallee(Node node){
         String code = new String("");
 
+        //function
+        code += node.getSpecification() + "(";
+
+        //parameters
+        for(int i = 0; i < node.getAdj().size(); i++){
+            code += generate(node.getAdj().get(i));
+            if(i != node.getAdj().size() - 1)
+                code += ",";
+        }
+        code += ")";
+
+        return code;
+    }
+
+    /*
+    INIT AND ASSIGN
+     */
+    private String handleVariableDeclaration(Node node){
+        String code = new String("");
+
+        //type + name
         code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
 
-        //If direct assignment
+        //If direct assignment, = ...
         for(Node n : node.getAdj()){
             code += " = " + generate(n);
         }
@@ -170,6 +216,7 @@ public class CodeGenerator {
 
         i++;
 
+        //process right assign
         while(i < node.getAdj().size()){
             code += generate(node.getAdj().get(i));
             i++;
@@ -177,9 +224,14 @@ public class CodeGenerator {
         return code;
     }
 
+    /*
+    ARRAYS
+     */
     public String handleArray(ArrayList<Node> subnodes){
         String code = new String("");
         boolean index = false;
+
+        //index is in the last subnode
         for(Node n : subnodes){
             if(index)
                 code += "[" + generate(n) + "]";
@@ -204,15 +256,21 @@ public class CodeGenerator {
         return code;
     }
 
+    /*
+    OPERATIONS/EXPRESSIONS
+     */
     public String handleOperation(Node node, ArrayList<Node> subnodes){
         String code = new String("");
 
+        //op(content)
         if(isSingleLeftOperation(node.getSpecification()) && subnodes.size() == 1){
             code += node.getSpecification() + "(" + generate(subnodes.get(0)) + ")";
         }
+        //(content)op
         else if(isSingleRightOperation(node.getSpecification())){
             code += generate(node.getAdj().get(0)) + node.getSpecification();
         }
+        //((content)op(content))
         else{
             code += "(" + generate(node.getAdj().get(0)); //right
             code += " " + node.getSpecification() + " ";        //operation
@@ -223,8 +281,13 @@ public class CodeGenerator {
         return code;
     }
 
+    /*
+    CONDITIONS
+     */
     public String handleIf(ArrayList<Node> subnodes){
         String code = new String("");
+
+        //if
         code += "\n" + spacement + "if(" + generate(subnodes.get(0)) + ")\n" +
                   spacement +  "{\n";
 
@@ -240,8 +303,13 @@ public class CodeGenerator {
         return code;
     }
 
+    /*
+    LOOPS
+     */
     public String handleWhile(ArrayList<Node> subnodes){
         String code = new String("");
+
+        //while
         code += "\n" + spacement + "while(" + generate(subnodes.get(0)) + ")\n" +
                 spacement +  "{\n";
 
@@ -259,6 +327,8 @@ public class CodeGenerator {
 
     public String handleDoWhile(ArrayList<Node> subnodes){
         String code = new String("");
+
+        //do
         code += "\n" + spacement + "do\n" +
                 spacement +  "{\n";
 
@@ -269,6 +339,8 @@ public class CodeGenerator {
         for(i = 0; i < subnodes.size()-1; i++)
             code += spacement + generate(subnodes.get(i)) + endPunctuation(subnodes.get(i).getType()) +  "\n";
         spacement = spacement.replaceFirst(Resources.DEF_SPC, "");
+
+        //while
         code += spacement +  "}while(" + generate(subnodes.get(i)) + ")\n";
 
         return code;
@@ -276,7 +348,7 @@ public class CodeGenerator {
 
     public String handleFor(ArrayList<Node> subnodes){
         String code = new String("");
-        code += "\n" + spacement + "for(" +
+        code += "\n" + spacement + "for(" +           //for
                 generate(subnodes.get(0)) + " ; " +   //init
                 generate(subnodes.get(1)) + " ; " +   //test
                 generate(subnodes.get(2)) + ")\n" +   //inc
@@ -293,26 +365,10 @@ public class CodeGenerator {
         return code;
     }
 
-    public String handleReturn(ArrayList<Node> subnodes){
-        if(subnodes.size() > 0)
-            return "return " + generate(subnodes.get(0));
-        else
-            return "return void";
-    }
 
-    public String handleCallee(Node node){
-        String code = new String("");
-        code += node.getSpecification() + "(";
-
-        for(int i = 0; i < node.getAdj().size(); i++){
-            code += generate(node.getAdj().get(i));
-            if(i != node.getAdj().size() - 1)
-                code += ",";
-        }
-        code += ")";
-
-        return code;
-    }
+    /*
+    Others
+     */
 
     public boolean isSingleLeftOperation(String operation){
         if(operation.equals("!") || operation.equals("-"))
