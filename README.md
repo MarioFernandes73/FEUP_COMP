@@ -44,7 +44,7 @@ da tabela de simbolos, caso haja essa relação. Um "Node" tem ainda um conjunto
 Existe um nó inicial, chamado START que tem como filhos diretos as FUNCTIONS. A partir daí, todos os nós terão um dos tipos do enum JSONType. Stores e loads são identificados através 
 da especificação do nó. 
  
-**CODE GENERATION:** (when applicable, describe how the code generation of your tool works and identify the possible problems your tool has regarding code generation.)
+**CODE GENERATION:** Para a geração de código, a HIR gerada apartir do parser é percorrida e por cada nó é avaliado o seu JSONType. A geração de código começa com a chamada da função generate(Node node) onde o parâmetro node, inicialmente, é a root da HIR. Dentro desta função, o tipo de JSONType do nó é avaliado e encaminhado para um handler específico que retorna uma string com o código gerado. Dentro destes handlers, pode ser particularmente relevante analisar os seus nós filhos, caso o tenham, e chamar de forma recursiva a função generate(Node n) por cada nó filho respetivo. A geração de código, em suma, traduz-se na concatenação dos códigos gerados por cada handler invocado. Os handlers existentes estão a grupados nos seguintes grupos: function related, declaration and assignment, variables and values, operations and expressions, conditions structures e loops.
  
 **OVERVIEW:** O trabalho desenvolvido está dividido em 4 partes: 
 
