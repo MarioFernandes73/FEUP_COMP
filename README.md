@@ -23,9 +23,9 @@ Esta ferramenta implica que o código javascript esteja em funções para a cont
  * arrays de várias dimensões.
  
  
-**EXECUTE:** (indicate how to run your tool)
+**EXECUTE:** Abrir um IDE, incluir as bibliotecas e correr gui.Interface. Depois é só digitar o código, e clicar "convert". Para obter os ficheiros da HIR, Symbol Table e do código Java clicar "Create Files". Mais informações em "Info".
  
-**DEALING WITH SYNTACTIC ERRORS: ** O facto de dependermos de uma terceira ferramenta para a conversão, que neste caso é o Esprima, implica usar o tratamento 
+**DEALING WITH SYNTACTIC ERRORS:** O facto de dependermos de uma terceira ferramenta para a conversão, que neste caso é o Esprima, implica usar o tratamento 
 de erros sintáticos que o "Esprima" utilizada. Neste caso o "Esprima" não tolera erros sintáticos, pelo que, se o utilizador digitar um texto com erros, o 
 "Esprima" devolve uma mensagem de erro que mostramos ao utilizador. A partir daqui, o programa fica à espera de um novo input, sem processar o anterior.
  
