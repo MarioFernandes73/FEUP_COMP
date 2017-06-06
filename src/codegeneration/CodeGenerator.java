@@ -148,29 +148,13 @@ public class CodeGenerator {
 
         String code = new String("");
 
-        //Multiple declarations in line
-        if(node.getAdj().size() > 0 && node.getAdj().get(0).getType() == JSONType.VARIABLEDECLARATION){
-            for(int i = 0; i < node.getAdj().size();i++){
-                Node n = node.getAdj().get(i);
+        code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
 
-                code += Resources.DataTypeToString(n.getReference().getType()) + " " + n.getReference().getName();
-
-                for(Node n2 : n.getAdj())
-                    code += " = " + generate(n2);
-
-                if(i != node.getAdj().size()-1)
-                    code += ";\n" + spacement;
-            }
+        //If direct assignment
+        for(Node n : node.getAdj()){
+            code += " = " + generate(n);
         }
-        //Individual declaration
-        else{
-            code += Resources.DataTypeToString(node.getReference().getType()) + " " + node.getReference().getName();
 
-            //If direct assignment
-            for(Node n : node.getAdj()){
-                code += " = " + generate(n);
-            }
-        }
 
         return code;
     }
