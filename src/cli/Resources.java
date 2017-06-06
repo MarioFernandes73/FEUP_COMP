@@ -1,7 +1,5 @@
 package cli;
 
-import javax.xml.crypto.Data;
-
 public class Resources
 {
 	public enum DataType{
@@ -47,8 +45,8 @@ public class Resources
 			case ARRAYDOUBLE: return "double[]";
 			case STRING: return "String";
 			case ARRAYSTRING: return "String[]";
-			case ARRAYBOOLEAN: return "Boolean[]";
-			case BOOLEAN: return "Boolean";
+			case ARRAYBOOLEAN: return "boolean[]";
+			case BOOLEAN: return "boolean";
 			default: return "Integer";
 		}
 	}

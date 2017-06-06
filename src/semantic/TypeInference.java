@@ -82,7 +82,7 @@ public class TypeInference
 
             if(parent != null){
                 DataType dt = st.getFunctionReturn();
-                node.setDescriptorType(dt);
+                parent.setDescriptorType(dt);
                 return;
             }
         }

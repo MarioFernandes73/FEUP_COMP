@@ -27,7 +27,6 @@ public class Parser
     {
         //File json = new File(jsonCode);
         //jsonCode = read(json);
-        System.out.println(jsonCode);
 
         //Gson gson = new Gson();
         Gson gson = new GsonBuilder()

@@ -19,8 +19,12 @@ import semantic.TypeInference;
 
 public class Main {
 
-    public static void main(String[] args) {
-    	Parser p = new Parser("test.json");
+    public static void main(String[] args)
+    {
+        WebCrawler wc = new WebCrawler("code");
+        wc.run();
+
+    	Parser p = new Parser(wc.getJsonCode());
     	p.run();
 
         TypeInference ti = new TypeInference(p.getTables(),p.getHir());
@@ -29,7 +33,5 @@ public class Main {
         CodeGenerator cg = new CodeGenerator(p.getHir(),p.getTables());
         cg.run();
         System.out.println(cg.getCode());
-
-        cg.printSymbolTable(p.getTables());
     }
 }

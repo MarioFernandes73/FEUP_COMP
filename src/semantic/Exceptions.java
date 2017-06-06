@@ -24,7 +24,7 @@ public class Exceptions {
         }
 
         public String getMessage(){
-            return "Variable \""+symbol+"\" might not have been initialized";
+            return "A variable might not have been initialized";
         }
     }
 

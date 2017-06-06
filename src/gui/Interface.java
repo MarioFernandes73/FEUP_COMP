@@ -97,7 +97,7 @@ public class Interface
                 //writeInFile("output.java",cg.getCode());
                 writeInFile("hir.txt",cg.printHIR(p.getHir(),""));
                 writeInFile("symbolTable.txt",cg.printSymbolTable(p.getTables()));
-                writeInFile("Main.java",cg.printSymbolTable(p.getTables()));
+                writeInFile("Main.txt",cg.printSymbolTable(p.getTables()));
             }
 
             private void writeInFile(final String filename, final String code)
