@@ -83,3 +83,4 @@ O utilizador ainda tem a possibilidade de poder guardar este código.
  
 **CONS:**
 Esta ferramenta é limitada pois não cobre muitas das funcionalidades e métodos da linguagem de javascript.
+Não está preparada para lidar com null nem com possíveis retornos ao invocar uma outra função.
