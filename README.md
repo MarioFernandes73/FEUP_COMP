@@ -1,3 +1,16 @@
+Repository for the course "Compiladores" (EIC0028) of the second semester of the third year of MIEIC in FEUP.
+
+In this repository there is the practical assignment of this course in the lective year of 2016/2017.
+
+The aim of the project was to make a program capable of transforming basic javascript code to java using a given AST.
+The program needs internet access in order to connect to http://esprima.org/ and get the associated AST.
+Below there's a thorough explanation (in Portuguese) of the program and its proper use.
+
+Credits:
+* [Mário Fernandes](https://github.com/MarioFernandes73)
+* [Inês Gomes](https://github.com/inesgomes)
+* [Catarina Ramos](https://github.com/catramos96)
+
 **PROJECT TITLE:** JS2JAVA
 
 **GROUP:** G18
